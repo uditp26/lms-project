@@ -2,6 +2,9 @@ from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
+from django.views import generic
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from .models import User
 
 class LoginFormView(View):
     form_class = LoginForm
@@ -36,3 +39,9 @@ class LoginFormView(View):
                     # return
 
         return render(request, self.template_name, {'form': form})
+
+class UserCreate(CreateView):
+	model  = User
+	fields = ["Name", "Email", "School_Name", "School_Address_Line_1", 
+               "Line_2", "City", "District", "State", 
+               "Principal_Name",  "Principal_Email"]
