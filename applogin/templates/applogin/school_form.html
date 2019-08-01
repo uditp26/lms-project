@@ -1,0 +1,27 @@
+{% extends 'applogin/base.html' %}
+{% block title %}Registration{% endblock %}
+
+{% block body %}
+<div style="padding-top: 10px; padding-bottom: 10px">
+	<div class="container" style=" height: 120px; background-color: lightcyan">
+        <h1>School Registration</h1>
+        <h4>Please fill up the form below</h4>
+	</div>
+</div>
+
+<div class = "container-fluid">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-9">
+            <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% include 'applogin/form-template.html'%}
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button type="submit" class = "btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

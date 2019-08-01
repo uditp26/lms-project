@@ -5,4 +5,6 @@ app_name = 'applogin'
 
 urlpatterns = [
     url(r'^$', views.LoginFormView.as_view(), name='login'),
+    url(r'register/$', views.SchoolView.as_view(), name='register'),
+    url(r'requestpwd/$', views.RequestpwdFormView.as_view(), name='requestpwd'),
 ]
