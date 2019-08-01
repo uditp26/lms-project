@@ -40,8 +40,8 @@ class LoginFormView(View):
 
         return render(request, self.template_name, {'form': form})
 
-class UserCreate(CreateView):
+class UserView(CreateView):
 	model  = User
-	fields = ["Name", "Email", "School_Name", "School_Address_Line_1", 
-               "Line_2", "City", "District", "State", 
-               "Principal_Name",  "Principal_Email"]
+	fields = [ "name", "email", "school_name", "school_address_line_1", 
+               "line_2", "city", "district", "state", 
+               "principal_name", "principal_email"]
