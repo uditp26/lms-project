@@ -1,0 +1,39 @@
+{% extends 'adminhome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Students</h1>
+            <h4>Class-wise list of students currently registered</h4>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-sm-offset-3 col-sm-8 text-right">
+        <a href="{% url 'adminhome:addstudent' %}">Add Student</a>
+    </div>
+    <div class="col-sm-offset-1 col-sm-8">
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th class="text-center text-uppercase">Class</th>
+                    <th class="text-center text-uppercase"># Students</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Text here</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>More text here</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

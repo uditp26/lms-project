@@ -15,3 +15,11 @@ class RequestpwdForm(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = ['email']
+
+class ResetpwdForm(forms.ModelForm):
+	password = forms.CharField(widget=forms.PasswordInput)
+	confirm_password = forms.CharField(widget=forms.PasswordInput)
+
+	class Meta:
+		model = User
+		fields = ['password', 'confirm_password']

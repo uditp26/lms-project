@@ -1,5 +1,5 @@
 from django.db import models
-
+# from django.contrib.auth.models import User, UserManager
 from django.urls import reverse
 
 class Admin(models.Model):
@@ -17,6 +17,14 @@ class Principal(models.Model):
 
     def __str__(self):
         return self.username
+
+# class CustomUser(User):
+#     user_type = models.IntegerField()
+
+#     objects = UserManager()
+
+#     def __str__(self):
+#         return self.first_name + ' ' + self.last_name
     
 class School(models.Model):
     name = models.CharField(max_length = 250) 
