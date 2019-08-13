@@ -30,25 +30,21 @@ class LoginFormView(View):
 
         if form.is_valid():
 
-            school = form.save(commit=False)
+            user = form.save(commit = False)
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']    
+            user.set_password(password)
+            user.save()
+            # reg =  Register()
+            # it will return users objects if credentials are correct  
+            user = authenticate(username = username, password = password)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    
+                    return redirect('applogin:registerschool')
+        return render(request, 'applogin/login_form.html', {'form': form})
 
-            # cleaned (normalized) data
-            schoolname = form.cleaned_data['schoolname']
-            password = form.cleaned_data['password']
-
-            school.set_password(password)
-            school.save()
-
-            # returns School objects if credentials are correct
-            school = authenticate(Schoolname=schoolname, password=password)
-
-            if school is not None:
-
-                if school.is_active:
-                    login(request, school)
-                    # return
-
-        return render(request, self.template_name, {'form': form})
 
 class RegistrationFormView(View):
     form_class = RegistrationForm
@@ -63,9 +59,12 @@ class RegistrationFormView(View):
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
-            registration_form_obj = form.save(commit = False)
-            registration_form_obj.is_school_registered = 0
-            registration_form_obj.save()           
+            user = form.save(commit = False)
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']    
+            user.set_password(password)
+            user.save()     
+            # it will return users objects if credentials are correct  
         return render(request, 'applogin/login_form.html', {'form': form})
 
 class SchoolFormView(View):
@@ -77,7 +76,7 @@ class SchoolFormView(View):
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
 
-    #put data inside blank text fields 
+    #put data inside blank text fields
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():

@@ -15,16 +15,15 @@ class LocalAdmin(models.Model):
         return self.first_name + ' ' + self.last_name
 
 class Register(models.Model):
-    first_name = models.CharField(max_length = 50) 
-    last_name = models.CharField(max_length = 50) 
+    username = models.CharField(max_length = 50) 
     email = models.EmailField(max_length = 100)
     password = models.CharField(max_length = 200) 
-    confirm_password = models.CharField(max_length = 200)
+    
     is_school_registered = models.IntegerField()
     def get_absolute_url(self):
-        return reverse('applogin:registerschool')
+        return reverse('applogin:login')
     def __str__(self):
-        return self.first_name
+        return self.username
 
 class School(models.Model):
     school_name = models.CharField(max_length = 500)

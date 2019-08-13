@@ -8,7 +8,7 @@ class LoginForm(forms.ModelForm):
 
 	class Meta:
 		model = User
-		fields = ['email', 'password']
+		fields = ['username', 'password']
 
 class RequestpwdForm(forms.ModelForm):
 	email = forms.CharField(widget=forms.EmailInput)
@@ -20,10 +20,9 @@ class RequestpwdForm(forms.ModelForm):
 class RegistrationForm(forms.ModelForm):
 	email = forms.CharField(widget=forms.EmailInput)
 	password = forms.CharField(widget=forms.PasswordInput)
-	confirm_password = forms.CharField(widget=forms.PasswordInput)
 	class Meta:
-		model = Register
-		fields = [ "first_name", "last_name", "email", "password", "confirm_password","is_school_registered"]
+		model = User
+		fields = [ "username", "email", "password"]
 
 class SchoolForm(forms.ModelForm):
 	class Meta:
