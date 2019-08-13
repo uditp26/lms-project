@@ -3,18 +3,44 @@
 	<link href="//cdn.bootcss.com/bootstrap-datetimepicker/4.17.44/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 	<script src="//cdn.bootcss.com/moment.js/2.17.1/moment.min.js"></script>
 	<script src="//cdn.bootcss.com/bootstrap-datetimepicker/4.17.44/js/bootstrap-datetimepicker.min.js"></script>
+
+	<!-- For Date Picker -->
+	<script>
+		$(function () {
+			$('.datetime-input').datetimepicker({
+				format:'YYYY-MM-DD'
+			});
+		});
+	</script>
+
+	<!-- For alert box -->
+	<!-- <script type="text/javascript">
+        $(document).ready(function() {
+            $(function() {
+                $( "#student_flag" ).dialog({
+                    modal: true,
+                    closeOnEscape: false,
+                    dialogClass: "no-close",
+                    resizable: false,
+                    draggable: false,
+                    width: 600,
+                    buttons: [
+                        {
+                            text: "OK",
+                            click: function() {
+                            $( this ).dialog( "close" );
+                            }
+                        }
+                    ]
+                });
+            });
+        });
+    </script> -->
+
 {% endblock %}
 {% block title %}Student Registration{% endblock %}
 
 {% block body %}
-
-<script>
-	$(function () {
-		$('.datetime-input').datetimepicker({
-			format:'YYYY-MM-DD'
-		});
-	});
-</script>
 
 <div style="padding-top: 10px; padding-bottom: 10px">
 	<div class="container" style=" height: 120px; background-color: lightcyan">
@@ -35,6 +61,21 @@
 			</div>
 		</div>
 	</form>
+
+	<!-- {% if student_flag %}
+		<div id="student_flag" title="Student Registration">
+			<p>Registration successful.</p>
+		</div>
+	{% endif %} -->
+	
+
+	<!-- {% if messages %}
+	<ul class="messages">
+		{% for message in messages %}
+		<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+		{% endfor %}
+	</ul>
+	{% endif %} -->
 </div>
 
 

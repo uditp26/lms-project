@@ -1,13 +1,25 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
 
-class LoginForm(forms.ModelForm):
+class LoginForm(forms.Form):
+	username = forms.CharField(max_length=50)
 	password = forms.CharField(widget=forms.PasswordInput)
 
 	class Meta:
 		model = User
 		fields = ['username', 'password']
+
+class RegistrationForm(UserCreationForm):
+	first_name = forms.CharField(max_length=50)
+	last_name = forms.CharField(max_length=50)
+	email = forms.CharField(widget=forms.EmailInput)
+	username = forms.CharField(max_length=50)
+
+	class Meta:
+		model = User
+		fields = [ "first_name", "last_name", "email", "username"]
 
 class RequestpwdForm(forms.ModelForm):
 	email = forms.CharField(widget=forms.EmailInput)
@@ -16,10 +28,11 @@ class RequestpwdForm(forms.ModelForm):
 		model = User
 		fields = ['email']
 
-class ResetpwdForm(forms.ModelForm):
+class ResetpwdForm(forms.Form):
+	username = forms.CharField(max_length=50)
 	password = forms.CharField(widget=forms.PasswordInput)
-	confirm_password = forms.CharField(widget=forms.PasswordInput)
+	password_confirmation = forms.CharField(widget=forms.PasswordInput)
 
 	class Meta:
 		model = User
-		fields = ['password', 'confirm_password']
+		fields = ['username', 'password', 'password_confirmation']

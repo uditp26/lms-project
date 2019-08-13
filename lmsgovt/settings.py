@@ -35,6 +35,7 @@ EMAIL_PORT = 1025
 # Application definition
 
 INSTALLED_APPS = [
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -106,9 +107,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# AUTHENTICATION_BACKENDS = {
-#     'lmsgovt.auth_backends.CustomUserModelBackend',
-# }
+AUTHENTICATION_BACKENDS = (
+    # 'lmsgovt.auth_backends.CustomUserModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

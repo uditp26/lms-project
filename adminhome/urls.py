@@ -6,6 +6,7 @@ app_name = 'adminhome'
 
 urlpatterns = [
     url(r'^$', views.HomepageView.as_view(), name='homepage'),
+    url(r'registerSchool/$', views.RegisterschoolFormView.as_view(), name='registerSchool'),
     url(r'logout/$', views.LogoutView.as_view(), name='logout'),
     url(r'students/$', views.StudentView.as_view(), name='students'),
     url(r'teachers/$', views.TeacherView.as_view(), name='teachers'),
