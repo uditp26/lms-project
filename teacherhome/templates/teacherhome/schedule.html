@@ -1,0 +1,96 @@
+{% extends 'teacherhome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Time Table</h1>
+            <h4>Find your subject's schedule from below table.</h4>
+    </div>
+</div>
+<div class="container">
+    <div class="col-sm-offset-1 col-sm-8">
+        
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <td>
+                    <td>8:30-9:30
+                    <td>9:30-10:30
+                    <td>10:3-11:30
+                    <td>11:30-12:30
+                    <td>12:30-2:00
+                    <td>2:00-3:00
+                    <td>3:00-4:00
+                    <td>4:00-5:00
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td>MONDAY
+                  <td>SUB1<br>
+                  <td>SUB2<br>
+                  <td>---
+                  <td>SUB3<br>
+                  <td rowspan="6">L<br>U<br>N<br>C<br>H
+                  <td>SUB4<br>
+                  <td>SUB5<br>
+                  <td>Games period
+                </tr>
+                <tr>
+                  <td>TUESDAY
+                  <td>SUB1<br>
+                  <td>SUB2<br>
+                  <td>SUB3<br>
+                  <td>---
+                  <td>SUB4<BR>
+                  <td>SUB5<br>
+                  <td>Games period
+                </tr>
+                <tr>
+                  <td>WEDNESDAY
+                  <td>SUB1<br>
+                  <td>SUB2<BR>
+                  <td>SWA<br>
+                  <td>---
+                  <td>lab
+                  <td>SUB4<BR>
+                  <td>SUB5<br>
+                </tr>
+                <tr>
+                  <td>THURSDAY
+                  <td>SUB1<br>
+                  <td>SUB2<br>
+                  <td>SUB3<BR>
+                  <td>---
+                  <td>SUB4<br>
+                  <td>SUB5<br>
+                  <td>library
+                </tr>
+                <tr>
+                  <td>FRIDAY
+                  <td>SUB1<BR>
+                  <td>SUB2<br>
+                  <td>SUB3<br>
+                  <td>---
+                  <td>SUB4<br>
+                  <td>SUB5<br>
+                  <td>Games period
+                </tr>
+                <tr>
+                  <td>SATURDAY
+                  <td>SUB1<br>
+                  <td>seminar
+                  <td>SUB4<br>
+                  <td>---
+                  <td>SUB5<br>
+                  <td>library
+                  <td>Games period
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+</div> 
+{% endblock %}
+

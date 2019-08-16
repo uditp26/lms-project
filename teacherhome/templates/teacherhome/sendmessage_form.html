@@ -1,0 +1,39 @@
+{% extends 'teacherhome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Send Report</h1>
+            <h4>Send message to the parents about students's performance.</h4>
+    </div>
+</div>
+<div class="container">
+    <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container-fluid">
+                <form id="contact" action="" method="post">
+                    <div class="col-xs-offset-2 col-xs-10" style="padding: 2px">
+                        <label class="form-check-label" for="materialUnchecked">Roll Number </label><br>
+                        <input placeholder="Student's Roll Number" type="text" tabindex="1" required autofocus style="width: 300px;" ><br>
+                    </div>
+                    <div class="col-xs-offset-2 col-xs-10" style="padding: 2px">
+                        <label class="form-check-label" for="materialUnchecked">Email-id</label><br>
+                        <input placeholder="Parent's Email Address" type="email" tabindex="2" required style="width: 300px;" ><br>
+                    </div>
+                    <div class="col-xs-offset-2 col-xs-10" style="padding: 2px">
+                        <label class="form-check-label" for="materialUnchecked">Message</label><br>
+                        <textarea  rows="6" cols="41" placeholder="Type your message here...." tabindex="3" required></textarea><br>
+                    </div>
+                </form>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-1">
+                    <button type="submit" class="btn btn-success">Send</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+    
+{% endblock %}
+
