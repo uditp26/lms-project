@@ -1,9 +1,11 @@
 from django.contrib.auth.models import User
 from django import forms
-from .models import School, Student, Teacher
+from .models import School, Student, Teacher, Principal
+from phonenumber_field.formfields import PhoneNumberField
 
 class RegisterschoolForm(forms.ModelForm):
     school_name = forms.CharField(max_length=500)
+    class_upto = forms.IntegerField()
     address = forms.Textarea()
     city = forms.CharField(max_length = 50)
     district = forms.CharField(max_length = 50)
@@ -13,7 +15,7 @@ class RegisterschoolForm(forms.ModelForm):
 
     class Meta:
         model = School
-        fields = ['school_name', 'address', 'city', 'district', 'state', 'pincode']
+        fields = ['school_name', 'class_upto', 'address', 'city', 'district', 'state', 'pincode']
 
 class AddstudentForm(forms.ModelForm):
     first_name = forms.TextInput()
@@ -33,10 +35,26 @@ class AddteacherForm(forms.ModelForm):
     date_of_birth = forms.DateTimeField(widget=forms.TextInput(attrs={'class':'datetime-input'}))
     joining_date = forms.DateTimeField(widget=forms.TextInput(attrs={'class':'datetime-input'}))
     email = forms.EmailInput()
-    phone = forms.NumberInput()
+    phone = PhoneNumberField(widget=forms.TextInput(), required=False)
     is_class_teacher = forms.BooleanField(required=False)
+    subject = forms.TextInput()
     resume = forms.FileField()
 
     class Meta:
         model = Teacher
-        fields = ['first_name', 'last_name', 'date_of_birth', 'joining_date', 'email', 'phone', 'is_class_teacher', 'resume']
+        fields = ['first_name', 'last_name', 'date_of_birth', 'joining_date', 'email', 'phone', 'is_class_teacher', 'subject', 'resume']
+
+class AddprincipalForm(forms.ModelForm):
+    first_name = forms.TextInput()
+    last_name = forms.TextInput()
+    date_of_birth = forms.DateTimeField(widget=forms.TextInput(attrs={'class':'datetime-input'}))
+    joining_date = forms.DateTimeField(widget=forms.TextInput(attrs={'class':'datetime-input'}))
+    email = forms.EmailInput()
+    phone = PhoneNumberField(widget=forms.TextInput(), required=False)
+    is_teacher = forms.BooleanField(required=False)
+    subject = forms.CharField(required=False)
+    resume = forms.FileField()
+
+    class Meta:
+        model = Principal
+        fields = ['first_name', 'last_name', 'date_of_birth', 'joining_date', 'email', 'phone', 'is_teacher', 'subject', 'resume']

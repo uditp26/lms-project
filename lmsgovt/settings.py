@@ -32,6 +32,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
 
+PHONENUMBER_DEFAULT_REGION = 'IN'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cleanup',
     # 'rest_framework',
     'applogin.apps.ApploginConfig',
     'adminhome.apps.AdminhomeConfig',

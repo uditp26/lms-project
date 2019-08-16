@@ -22,14 +22,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Text here</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>More text here</td>
-                    <td></td>
-                </tr>
+                <tbody>
+                    {% for teacher, subject in teachers.items %}
+                        <tr>
+                            <td><a href="#">{{ teacher }}</a></td>
+                            <td>{{ subject }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </tbody>
         </table>
     </div>
