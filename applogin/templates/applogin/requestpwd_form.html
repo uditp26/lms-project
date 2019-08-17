@@ -6,7 +6,7 @@
 <div style="padding-top: 10px; padding-bottom: 10px">
 	<div class="container" style=" height: 120px; background-color: lightcyan">
 			<h1>Request Password</h1>
-			<h4>Enter registered email address to which the password is to be sent</h4>
+			<h4>Enter registered email address to which the OTP is to be sent</h4>
 	</div>
 </div>
 
@@ -15,9 +15,9 @@
 		{% csrf_token %}
 		<div class="container-fluid">
 			{% include 'applogin/form-template.html' %}
-			<div class="form-group">
-				<div class="col-xs-offset-3 col-xs-1">
-					<button type="submit" class="btn btn-warning">Send mail</button>
+			<div class="form-group text-center">
+				<div class="col-xs-offset-3 col-xs-1 ">
+					<button type="submit" class="btn btn-warning">Send OTP</button>
 				</div>
 			</div>
 		</div>

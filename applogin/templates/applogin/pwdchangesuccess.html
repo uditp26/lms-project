@@ -1,16 +1,16 @@
 {% extends 'applogin/base.html' %}
-{% block title %}Registration Complete{% endblock %}
+{% block title %}Password reset{% endblock %}
 {% block body %}
 <div style="padding-top: 10px; padding-bottom: 10px">
 	<div class="container" style=" height: 120px; background-color: lightcyan">
-			<h1>Registered Successfully</h1>
+			<h1>Password changed Successfully</h1>
 	</div>
 </div>
 
 <div class="container">
 	<div class="container-fluid">
 		<div class="col-lg-offset-2 col-sm-10" style="padding: 20px">
-			<h4>Registration successful. Click here to <a href="{% url 'applogin:login' %}">login.</a></h4>
+			<h4>Password change successful. Click here to <a href="{% url 'applogin:login' %}">login.</a></h4>
 		</div>
 	</div>
 </div>

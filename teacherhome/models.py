@@ -38,4 +38,3 @@ class SendResult(models.Model):
     result = models.FileField()
     def __str__(self):
         return self.roll_number + ' ' +self.email_id
-

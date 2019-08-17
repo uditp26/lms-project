@@ -1,14 +1,25 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .models import School, Register
 
 
-class LoginForm(forms.ModelForm):
+class LoginForm(forms.Form):
+	username = forms.CharField(max_length=50)
 	password = forms.CharField(widget=forms.PasswordInput)
 
 	class Meta:
 		model = User
 		fields = ['username', 'password']
+
+class RegistrationForm(UserCreationForm):
+	first_name = forms.CharField(max_length=50)
+	last_name = forms.CharField(max_length=50)
+	email = forms.CharField(widget=forms.EmailInput)
+	username = forms.CharField(max_length=50)
+
+	class Meta:
+		model = User
+		fields = [ "first_name", "last_name", "email", "username"]
 
 class RequestpwdForm(forms.ModelForm):
 	email = forms.CharField(widget=forms.EmailInput)
@@ -17,14 +28,11 @@ class RequestpwdForm(forms.ModelForm):
 		model = User
 		fields = ['email']
 
-class RegistrationForm(forms.ModelForm):
-	email = forms.CharField(widget=forms.EmailInput)
+class ResetpwdForm(forms.Form):
+	username = forms.CharField(max_length=50)
 	password = forms.CharField(widget=forms.PasswordInput)
+	password_confirmation = forms.CharField(widget=forms.PasswordInput)
+
 	class Meta:
 		model = User
-		fields = [ "username", "email", "password"]
-
-class SchoolForm(forms.ModelForm):
-	class Meta:
-		model = School
-		fields = [ "school_name", "school_address_line_1", "line_2", "city", "district", "state"]
+		fields = ['username', 'password', 'password_confirmation']
