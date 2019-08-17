@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'principal/$', views.PrincipalView.as_view(), name='principal'),
     url(r'students/addstudent/$', views.AddstudentFormView.as_view(), name='addstudent'),
     url(r'teachers/addteacher/$', views.AddteacherFormView.as_view(), name='addteacher'),
+    url(r'principal/addPrincipal/$', views.AddprincipalFormView.as_view(), name='addPrincipal'),
 ]

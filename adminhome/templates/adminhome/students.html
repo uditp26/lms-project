@@ -22,14 +22,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Text here</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>More text here</td>
-                    <td></td>
-                </tr>
+                {% for clss, count in class_dict.items %}
+                    <tr>
+                        <td><a href="#">{{ clss }}</a></td>
+                        <td>{{ count }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
