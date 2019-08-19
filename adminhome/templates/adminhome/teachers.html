@@ -23,10 +23,10 @@
             </thead>
             <tbody>
                 <tbody>
-                    {% for teacher, subject in teachers.items %}
+                    {% for teacher in teachers %}
                         <tr>
-                            <td><a href="#">{{ teacher }}</a></td>
-                            <td>{{ subject }}</td>
+                            <td><a href="{% url 'adminhome:teachers_detail' teacher.name_to_url %}">{{ teacher }}</a></td>
+                            <td>{{ teacher.subject }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

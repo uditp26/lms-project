@@ -1,13 +1,15 @@
 from django.conf.urls import url, include
 from . import views
+from django.contrib.auth import views as auth_views
 
 app_name = 'applogin'
 
 urlpatterns = [
     url(r'^$', views.LoginFormView.as_view(), name='login'),
     url(r'register/$', views.RegistrationFormView.as_view(), name='register'),
-    url(r'requestpwd/$', views.RequestpwdFormView.as_view(), name='requestpwd'),
-    url(r'resetpwd/$', views.ResetpwdFormView.as_view(), name='resetpwd'),
     url(r'regsuccess/$', views.RegistrationSuccessView.as_view(), name='successful_reg'),
-    url(r'pwdchngsuccess/$', views.PwdChangeSuccessView.as_view(), name='successful_pwd'),
+    url(r'password_reset/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    url(r'password_reset_done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    url(r'password_reset_confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    url(r'password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]

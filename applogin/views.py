@@ -51,6 +51,7 @@ class LoginFormView(View):
                         return redirect('')
                     else:
                         return redirect('adminhome:homepage')
+                        # return HttpResponseRedirect(reverse('adminhome:homepage', args=(username,)))
                 else:
                     form.add_error('username', "User does not exist.")
             else:
@@ -102,75 +103,81 @@ class RegistrationSuccessView(View):
     def get(self, request):
         return render(request, self.template_name)
 
-class PwdChangeSuccessView(View):
-    template_name = 'applogin/pwdchangesuccess.html'
+# class RequestpwdFormView(View):
+#     form_class = RequestpwdForm
+#     template_name = 'applogin/requestpwd_form.html'
 
-    def get(self, request):
-        return render(request, self.template_name)
+#     # displays a blank form
+#     def get(self, request):
+#         form = self.form_class(None)
+#         return render(request, self.template_name, {'form': form})
 
-class RequestpwdFormView(View):
-    form_class = RequestpwdForm
-    template_name = 'applogin/requestpwd_form.html'
+#     # process form data
+#     def post(self, request):
+#         form = self.form_class(request.POST)
 
-    # displays a blank form
-    def get(self, request):
-        form = self.form_class(None)
-        return render(request, self.template_name, {'form': form})
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
 
-    # process form data
-    def post(self, request):
-        form = self.form_class(request.POST)
-
-        if form.is_valid():
-            email = form.cleaned_data['email']
-
-            # otp = getOTP(timestamp)
-            otp = "1234"
+#             # otp = getOTP(timestamp)
+#             otp = "1234"
             
 
-            # python -m smtpd -n -c DebuggingServer localhost:1025
+#             # python -m smtpd -n -c DebuggingServer localhost:1025
 
-            send_mail(
-                'App - Request for password change',
-                'Here\'s your requested OTP for password change: ' + otp + '. \n This OTP will remain valid for 30 mins.',
-                'admin-mail@app.com',
-                [email],
-                fail_silently=False,
-            )
+#             send_mail(
+#                 'App - Request for password change',
+#                 'Here\'s your requested OTP for password change: ' + otp + '. \n This OTP will remain valid for 30 mins.',
+#                 'admin-mail@app.com',
+#                 [email],
+#                 fail_silently=False,
+#             )
 
-            return HttpResponseRedirect(reverse('applogin:resetpwd'))
+#             return redirect('applogin:requestpwdcnf')
 
-        return render(request, self.template_name, {'form': form})
+#         return render(request, self.template_name, {'form': form})
 
-class ResetpwdFormView(View):
-    form_class = ResetpwdForm
-    template_name = 'applogin/resetpwd_form.html'
+# class RequestpwdcnfView(View):
+#     template_name = 'applogin/requestpwdcnf.html'
 
-    # displays a blank form
-    def get(self, request):
-        form = self.form_class(None)
-        return render(request, self.template_name, {'form': form})
+#     def get(self, request):
+#         return render(request, self.template_name)
 
-    # process form data
-    def post(self, request):
-        form = self.form_class(request.POST)
+# class ResetpwdFormView(View):
+#     form_class = ResetpwdForm
+#     template_name = 'applogin/resetpwd_form.html'
 
-        if form.is_valid():
-            # logic for storing the new password
-            # enforce strong passwrod constraints!
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            confpwd = form.cleaned_data['password_confirmation']
+#     # displays a blank form
+#     def get(self, request):
+#         form = self.form_class(None)
+#         return render(request, self.template_name, {'form': form})
 
-            if password == confpwd:
-                user = User.objects.get(username=username)
-                if user is not None:
-                    user.set_password(password)
-                    user.save()
-                    return render(request, 'applogin/pwdchangesuccess.html', {'form': form})
-                else:
-                    form.add_error('username', "User credentials did not match existing records.")
-            else:
-                form.add_error('password_confirmation', "Password fields do not match.")
+#     # process form data
+#     def post(self, request):
+#         form = self.form_class(request.POST)
 
-        return render(request, self.template_name, {'form': form})
+#         if form.is_valid():
+#             # logic for storing the new password
+#             # enforce strong passwrod constraints!
+#             username = form.cleaned_data['username']
+#             password = form.cleaned_data['password']
+#             confpwd = form.cleaned_data['password_confirmation']
+
+#             if password == confpwd:
+#                 user = User.objects.get(username=username)
+#                 if user is not None:
+#                     user.set_password(password)
+#                     user.save()
+#                     return render(request, 'applogin/pwdchangesuccess.html', {'form': form})
+#                 else:
+#                     form.add_error('username', "User credentials did not match existing records.")
+#             else:
+#                 form.add_error('password_confirmation', "Password fields do not match.")
+
+#         return render(request, self.template_name, {'form': form})
+
+# class PwdChangeSuccessView(View):
+#     template_name = 'applogin/pwdchangesuccess.html'
+
+#     def get(self, request):
+#         return render(request, self.template_name)

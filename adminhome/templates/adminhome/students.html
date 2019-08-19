@@ -24,7 +24,7 @@
             <tbody>
                 {% for clss, count in class_dict.items %}
                     <tr>
-                        <td><a href="#">{{ clss }}</a></td>
+                        <td><a href="{% url 'adminhome:class_students' clss %}">{{ clss }}</a></td>
                         <td>{{ count }}</td>
                     </tr>
                 {% endfor %}

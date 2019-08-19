@@ -28,26 +28,32 @@ ALLOWED_HOSTS = []
 
 # CUSTOM_USER_MODEL = 'accounts.CustomUser'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
 
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'uditpant.96@gmail.com'
+EMAIL_HOST_PASSWORD = '*****'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'uditpant.96@gmail.com'
+
 
 PHONENUMBER_DEFAULT_REGION = 'IN'
 
 # Application definition
 
 INSTALLED_APPS = [
-    
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_cleanup',
     # 'rest_framework',
+    'django.contrib.admin',
+    'django.contrib.auth',
     'applogin.apps.ApploginConfig',
     'adminhome.apps.AdminhomeConfig',
+    'django_cleanup',
 ]
 
 MIDDLEWARE = [

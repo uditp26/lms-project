@@ -11,6 +11,7 @@ import os
 class HomepageView(View):
     template_name = 'adminhome/homepage.html'
 
+    # def get(self, request, username):
     def get(self, request):
         current_user = request.user
         if str(current_user) is 'AnonymousUser':
@@ -81,7 +82,7 @@ class StudentView(View):
         bundle = dict()
 
         for c in range(1, NC+1):
-            clss = 'Class ' + str(c)
+            clss = 'Class_' + str(c)
             school_students = Student.objects.filter(school=school)
             class_count = len(school_students.filter(study=c))
             bundle[clss] = class_count
@@ -107,7 +108,7 @@ class AddstudentFormView(View):
             school = School.objects.get(school_admin=current_user)
             prefix = str(form.cleaned_data['admission_date'])[:4]
 
-            all_students = len(Student.objects.all())
+            all_students = len(Student.objects.filter(school=school).filter(enrolment_no__startswith=prefix))
             enrolment_no = prefix + '' + str(all_students + 1)
 
             student.enrolment_no = enrolment_no
@@ -125,11 +126,30 @@ class AddstudentFormView(View):
 
         return render(request, self.template_name, {'form': form})
 
-class StudentIndexView(generic.ListView):
+class StudentIndexView(View):
     template_name = 'adminhome/students_index.html'
 
-    def get_queryset(self):
-        return Student.objects.all()
+    def get(self, request, clss):
+        current_user = request.user
+        school = School.objects.get(school_admin=current_user)
+
+        students = Student.objects.filter(school=school)
+        cls_no = int(clss[6:])
+
+        class_students = students.filter(study=cls_no)
+
+        return render(request, self.template_name, {'class_students': class_students, 'clss':clss})
+
+class StudentDetailView(View):
+    template_name = 'adminhome/students_detail.html'
+
+    def get(self, request, clss, student):
+        school = request.user.school
+        study = int(clss[6:])
+        fname = student.split('-')[0]
+        lname = student.split('-')[1]
+        student = Student.objects.get(school=school, study=study, first_name=fname, last_name=lname)
+        return render(request, self.template_name, {'student':student})    
 
 class TeacherView(View):
     template_name = 'adminhome/teachers.html'
@@ -139,14 +159,8 @@ class TeacherView(View):
         school = School.objects.get(school_admin=current_user)
 
         teachers = Teacher.objects.filter(school=school)
-        bundle = dict()
 
-        for t in teachers:
-            t_name = t.first_name + ' ' + t.last_name
-            # Issue : Two teachers with the same name
-            bundle[t_name] = t.subject
-
-        return render(request, self.template_name, {'teachers': bundle})
+        return render(request, self.template_name, {'teachers': teachers})
 
 class AddteacherFormView(View):
     form_class = AddteacherForm
@@ -175,6 +189,16 @@ class AddteacherFormView(View):
             return redirect('adminhome:addteacher')
 
         return render(request, self.template_name, {'form': form})
+
+class TeacherDetailView(View):
+    template_name = 'adminhome/teachers_detail.html'
+
+    def get(self, request, teacher):
+        school = request.user.school
+        fname = teacher.split('-')[0]
+        lname = teacher.split('-')[1]
+        teacher = Teacher.objects.get(school=school, first_name=fname, last_name=lname)
+        return render(request, self.template_name, {'teacher': teacher})  
 
 class PrincipalView(View):
     template_name = 'adminhome/principal.html'

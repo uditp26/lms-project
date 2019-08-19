@@ -63,6 +63,9 @@ class Student(models.Model):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
+    def name_to_url(self):
+        return self.first_name + '-' + self.last_name
+
 class Teacher(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -77,6 +80,9 @@ class Teacher(models.Model):
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
+
+    def name_to_url(self):
+        return self.first_name + '-' + self.last_name
 
 class Principal(models.Model):
     first_name = models.CharField(max_length=100)
