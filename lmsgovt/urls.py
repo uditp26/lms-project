@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('applogin/', include('applogin.urls')),
     path('adminhome/', include('adminhome.urls')),
-    url('^', include('django.contrib.auth.urls')),
+    # url('^', include('django.contrib.auth.urls')),
 ]
 
 if settings.DEBUG:

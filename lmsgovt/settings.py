@@ -26,17 +26,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# CUSTOM_USER_MODEL = 'accounts.CustomUser'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'localhost'
-# EMAIL_PORT = 1025
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'uditpant.96@gmail.com'
-EMAIL_HOST_PASSWORD = '*****'
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'uditpant.96@gmail.com'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'abc@gmail.com'
+# EMAIL_HOST_PASSWORD = '********'
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = 'abc@gmail.com'
 
 
 PHONENUMBER_DEFAULT_REGION = 'IN'
@@ -117,7 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    # 'lmsgovt.auth_backends.CustomUserModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

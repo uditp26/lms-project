@@ -50,12 +50,15 @@ class LocalAdmin(models.Model):
         return self.first_name + ' ' + self.last_name
 
 class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     enrolment_no = models.CharField(max_length=20)
     roll_no = models.CharField(max_length=20)
+
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
     email = models.EmailField()
+    address = models.TextField(max_length=500)
     admission_date = models.DateField()
     study = models.PositiveIntegerField()
     school = models.ForeignKey(School, on_delete=models.CASCADE)
@@ -67,12 +70,16 @@ class Student(models.Model):
         return self.first_name + '-' + self.last_name
 
 class Teacher(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
     email = models.EmailField()
+    address = models.TextField(max_length=500)
     joining_date = models.DateField()
     is_class_teacher = models.BooleanField(default=False)
+    class_teacher_of = models.PositiveIntegerField()
     subject = models.CharField(max_length=100, null=True)
     resume = models.FileField(upload_to=get_upload_path, validators=[validate_file_extension])
     school = models.ForeignKey(School, on_delete=models.CASCADE)
@@ -85,10 +92,12 @@ class Teacher(models.Model):
         return self.first_name + '-' + self.last_name
 
 class Principal(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
     email = models.EmailField()
+    address = models.TextField(max_length=500)
     joining_date = models.DateField()
     is_teacher = models.BooleanField(default=False)
     subject = models.CharField(max_length=100, null=True)

@@ -4,9 +4,80 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import logout
 from .models import LocalAdmin, Student, Teacher, Principal, Parent, School
 from .forms import AddstudentForm, AddteacherForm, RegisterschoolForm, AddprincipalForm
+from django.contrib.auth.models import User
 from django.http import Http404
+from django.core.mail import send_mail
 import os
 # from django.contrib import messages
+
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+
+from django.template import loader
+
+import string
+from random import *
+min_char = 8
+max_char = 12
+
+def createNewUser(email, first_name, last_name):
+    username = email.split('@')[0]
+    # check for unique username
+    similar_users = len(User.objects.filter(username=username))
+    if similar_users != 0:
+        new_username = username + '_' + str(similar_users)
+        i = 0
+        while len(User.objects.filter(username=new_username)) != 0:
+            i += 1
+            new_username = username + '_' + str(similar_users  + i)
+        username = new_username
+
+    # generate a random string
+    allchar = string.ascii_letters + string.punctuation + string.digits
+    password = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
+
+    new_user = User(username=username, email=email, first_name=first_name, last_name=last_name)
+    new_user.set_password(password)
+    new_user.save()
+
+    return new_user, username
+
+def sendSetPasswordMail(request, new_user, first_name, username, current_user, email):
+
+    current_site = get_current_site(request)
+    domain = current_site.domain
+    uid = urlsafe_base64_encode(force_bytes(new_user.pk))
+    token = default_token_generator.make_token(new_user)
+    protocol = 'http'
+
+    if type(token) != str:
+        token = token[0]
+
+    html_message = loader.render_to_string(
+    'adminhome/user_registration_email.html',
+    {
+        'name': first_name,
+        'username': username,
+        'protocol': protocol,
+        'domain':  domain,
+        'uid': uid,
+        'token': token
+    })
+
+    # print(html_message)
+
+    # re-configure connection/email backend dynamically!
+
+    send_mail(
+        'Account Registration',
+        '',
+        str(current_user),
+        [email],
+        fail_silently=False,
+        html_message=html_message
+    )
 
 class HomepageView(View):
     template_name = 'adminhome/homepage.html'
@@ -105,6 +176,32 @@ class AddstudentFormView(View):
 
         if form.is_valid():
             student = form.save(commit=False)
+
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+
+            # username = email.split('@')[0]
+            # # check for unique username
+            # similar_users = len(User.objects.filter(username=username))
+            # if similar_users != 0:
+            #     new_username = username + '_' + str(similar_users)
+            #     i = 0
+            #     while len(User.objects.filter(username=new_username)) != 0:
+            #         i += 1
+            #         new_username = username + '_' + str(similar_users  + i)
+            #     username = new_username
+
+            # # generate a random string
+            # allchar = string.ascii_letters + string.punctuation + string.digits
+            # password = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
+
+            # new_user = User(username=username, email=email, first_name=first_name, last_name=last_name)
+            # new_user.set_password(password)
+            # new_user.save()
+
+            new_user, username = createNewUser(email, first_name, last_name)
+
             school = School.objects.get(school_admin=current_user)
             prefix = str(form.cleaned_data['admission_date'])[:4]
 
@@ -114,8 +211,11 @@ class AddstudentFormView(View):
             student.enrolment_no = enrolment_no
 
             student.school = school
+            student.user = new_user
             
             student.save()
+
+            sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
             
             # Display a message for successful registration 
 
@@ -146,8 +246,9 @@ class StudentDetailView(View):
     def get(self, request, clss, student):
         school = request.user.school
         study = int(clss[6:])
-        fname = student.split('-')[0]
-        lname = student.split('-')[1]
+        stud_arr = student.split('-')
+        fname = stud_arr[0]
+        lname = stud_arr[1]
         student = Student.objects.get(school=school, study=study, first_name=fname, last_name=lname)
         return render(request, self.template_name, {'student':student})    
 
@@ -160,7 +261,10 @@ class TeacherView(View):
 
         teachers = Teacher.objects.filter(school=school)
 
-        return render(request, self.template_name, {'teachers': teachers})
+        if len(teachers) > 0:
+            return render(request, self.template_name, {'teachers': teachers})
+
+        return render(request, self.template_name)
 
 class AddteacherFormView(View):
     form_class = AddteacherForm
@@ -177,15 +281,80 @@ class AddteacherFormView(View):
         current_user = request.user
 
         if form.is_valid():
+            # class_taecher_of field should be enforced only when is_class_teacher is selected!
             teacher = form.save(commit=False)
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+
+            # username = email.split('@')[0]
+            # # check for unique username
+            # similar_users = len(User.objects.filter(username=username))
+            # if similar_users != 0:
+            #     new_username = username + '_' + str(similar_users)
+            #     i = 0
+            #     while len(User.objects.filter(username=new_username)) != 0:
+            #         i += 1
+            #         new_username = username + '_' + str(similar_users  + i)
+            #     username = new_username
+
+            # # generate a random string
+            # allchar = string.ascii_letters + string.punctuation + string.digits
+            # password = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
+
+            # new_user = User(username=username, email=email, first_name=first_name, last_name=last_name)
+            # new_user.set_password(password)
+            # new_user.save()
+
+            new_user, username = createNewUser(email, first_name, last_name)
+
             school = School.objects.get(school_admin=current_user)
 
             teacher.school = school
-            
+            teacher.user = new_user
+
             teacher.save()
 
-            # Display a message for successful registration 
+            sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
+
+            # create one-time link: protocol://domain/url/uidb64=uid/token=token/
+
+            # current_site = get_current_site(request)
+            # domain = current_site.domain
+            # uid = urlsafe_base64_encode(force_bytes(new_user.pk))
+            # token = default_token_generator.make_token(new_user),
+            # protocol = 'http'
+
+            # # send mail to teacher
+
+            # # print(token)
+
+            # html_message = loader.render_to_string(
+            # 'adminhome/user_registration_email.html',
+            # {
+            #     'name': first_name,
+            #     'username': username,
+            #     'protocol': protocol,
+            #     'domain':  domain,
+            #     'uid': uid,
+            #     'token': token[0]
+            # })
+
+            # # print(html_message)
+
+            # # re-configure connection/email backend dynamically!
+
+            # send_mail(
+            #     'Account Registration',
+            #     '',
+            #     str(current_user),
+            #     [email],
+            #     fail_silently=False,
+            #     html_message=html_message
+            # )
             
+            # Display a message for successful registration
+
             return redirect('adminhome:addteacher')
 
         return render(request, self.template_name, {'form': form})
@@ -195,10 +364,11 @@ class TeacherDetailView(View):
 
     def get(self, request, teacher):
         school = request.user.school
-        fname = teacher.split('-')[0]
-        lname = teacher.split('-')[1]
+        name_arr = teacher.split('-')
+        fname = name_arr[0]
+        lname = name_arr[1]
         teacher = Teacher.objects.get(school=school, first_name=fname, last_name=lname)
-        return render(request, self.template_name, {'teacher': teacher})  
+        return render(request, self.template_name, {'teacher': teacher})
 
 class PrincipalView(View):
     template_name = 'adminhome/principal.html'
@@ -244,8 +414,36 @@ class AddprincipalFormView(View):
                 school.has_principal = True
                 school.save()
 
+                first_name = form.cleaned_data['first_name']
+                last_name = form.cleaned_data['last_name']
+                email = form.cleaned_data['email']
+
+                # username = email.split('@')[0]
+                # # check for unique username
+                # similar_users = len(User.objects.filter(username=username))
+                # if similar_users != 0:
+                #     new_username = username + '_' + str(similar_users)
+                #     i = 0
+                #     while len(User.objects.filter(username=new_username)) != 0:
+                #         i += 1
+                #         new_username = username + '_' + str(similar_users  + i)
+                #     username = new_username
+
+                # # generate a random string
+                # allchar = string.ascii_letters + string.punctuation + string.digits
+                # password = "".join(choice(allchar) for x in range(randint(min_char, max_char)))
+
+                # new_user = User(username=username, email=email, first_name=first_name, last_name=last_name)
+                # new_user.set_password(password)
+                # new_user.save()
+
+                new_user, username = createNewUser(email, first_name, last_name)
+
                 principal.school = school
+                principal.user = new_user
                 principal.save()
+
+                sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
 
                 # Display a message for successful registration
                 
