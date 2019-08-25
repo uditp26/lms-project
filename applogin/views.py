@@ -44,7 +44,7 @@ class LoginFormView(View):
                     if radio_btn == 1:
                         return redirect('')
                     elif radio_btn == 2:
-                        return redirect('')
+                        return redirect('teacherhome:teacher_homepage')
                     elif radio_btn == 3:
                         return redirect('')
                     elif radio_btn == 4:

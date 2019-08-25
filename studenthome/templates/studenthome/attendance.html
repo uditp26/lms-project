@@ -1,0 +1,36 @@
+{% extends 'studenthome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Students</h1>
+            <h4>Attendance</h4>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="col-sm-offset-1 col-sm-8">
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th class="text-center text-uppercase">Month</th>
+                    <th class="text-center text-uppercase">Attendance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tbody>
+                    {% for month, attend in Attendance.items %}
+                        <tr>
+                            <td>{{ month }}</td>
+                            <td>{{ attend }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

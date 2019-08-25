@@ -6,6 +6,7 @@ from .models import LocalAdmin, Student, Teacher, Principal, Parent, School
 from .forms import AddstudentForm, AddteacherForm, RegisterschoolForm, AddprincipalForm
 from django.http import Http404
 import os
+from django.contrib.auth.models import User
 # from django.contrib import messages
 
 class HomepageView(View):
@@ -165,13 +166,8 @@ class AddteacherFormView(View):
         if form.is_valid():
             teacher = form.save(commit=False)
             school = School.objects.get(school_admin=current_user)
-
             teacher.school = school
-            
             teacher.save()
-
-            # Display a message for successful registration 
-            
             return redirect('adminhome:addteacher')
 
         return render(request, self.template_name, {'form': form})

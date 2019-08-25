@@ -68,6 +68,9 @@ class Teacher(models.Model):
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
     email = models.EmailField()
+    
+    # email = models.OneToOneField(User, on_delete=models.CASCADE)
+    
     joining_date = models.DateField()
     is_class_teacher = models.BooleanField(default=False)
     subject = models.CharField(max_length=100, null=True)

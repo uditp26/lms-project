@@ -29,6 +29,7 @@ class AddstudentForm(forms.ModelForm):
         model = Student
         fields = ['first_name', 'last_name', 'date_of_birth', 'admission_date', 'email', 'study']
 
+
 class AddteacherForm(forms.ModelForm):
     first_name = forms.TextInput()
     last_name = forms.TextInput()
