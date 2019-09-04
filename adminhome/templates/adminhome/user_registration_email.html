@@ -1,0 +1,14 @@
+{% autoescape off %}
+
+<p>Hi {{ name }}! Your account has been created with the following username: <b>{{ username }}</b>.</p> 
+
+<p>To complete the registration process for your account, you must set a password for your account. Please click the link below for setting up a new password:</p>
+
+<p>{{ protocol }}://{{ domain }}{% url 'applogin:password_reset_confirm' uidb64=uid token=token %}</p>
+
+<p>If clicking the link above doesn't work, please copy and paste the URL in a new browser window instead.</p>
+
+<p>Sincerely,</p>
+<p>Dev Team</p>
+
+{% endautoescape %}

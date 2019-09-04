@@ -1,0 +1,26 @@
+{% extends 'teacherhome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Attendance</h1>
+            <h4>Mark the attendance of the class.name.</h4>
+    </div>
+</div>
+
+<div class="container">
+    <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container-fluid">
+            {% include 'teacherhome/form-template.html' %}
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-1">
+                    <button type="submit" class="btn btn-success">Upload</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

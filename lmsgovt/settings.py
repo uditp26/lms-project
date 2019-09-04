@@ -47,8 +47,9 @@ INSTALLED_APPS = [
     'django_cleanup',
     # 'rest_framework',
     'applogin.apps.ApploginConfig',
-    'adminhome.apps.AdminhomeConfig',
     'teacherhome.apps.TeacherhomeConfig',
+    'adminhome.apps.AdminhomeConfig',
+    # 'studenthome.apps.StudenthomeConfig',
 ]
 
 MIDDLEWARE = [

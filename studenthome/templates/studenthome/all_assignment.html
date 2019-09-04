@@ -1,0 +1,36 @@
+{% extends 'studenthome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Students</h1>
+            <h4>List of all assignment</h4>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-sm-offset-1 col-sm-8">
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th class="text-center text-uppercase">Subject</th>
+                    <th class="text-center text-uppercase">Due</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tbody>
+                    {% for subject, due in Assignment.items %}
+                        <tr>
+                            <td><a href="#">{{ subject }}</a></td>
+                            <td>{{ due }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

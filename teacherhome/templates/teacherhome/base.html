@@ -37,27 +37,27 @@
                     </li>
                    
                     <li class="">
-                        <a href="{% url 'teacherhome:add_assign'%}">
+                        <a href="{% url 'teacherhome:view_assign'%}">
                             <span class="glyphicon glyphicon-book" aria-hidden="true"></span>&nbsp; Assignments
                         </a>
                     </li>
                     <li class="">
                         <a href="{% url 'teacherhome:attendance'%}">
-                            <span class="glyphicon glyphicon-user-group" aria-hidden="true"></span>&nbsp; Attendence
+                            <span class="glyphicon glyphicon-user-group" aria-hidden="true"></span>&nbsp; Attendance
                         </a>
                     </li>
                     
                     <li class="dropdown">
-                        <a href="{% url 'teacherhome:sendmessage'%}" class="dropdown-toggle" data-toggle="dropdown">&nbsp;<span class="glyphicon glyphicon-email"></span> Send Message <span class="caret"></span></a>
+                        <a href="{% url 'teacherhome:teacher_homepage'%}" class="dropdown-toggle" data-toggle="dropdown">&nbsp;<span class="glyphicon glyphicon-email"></span> Send Message <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="{% url 'teacherhome:sendattendance'%}">Send Attendance</a>
+                                <a href="{% url 'teacherhome:teacher_homepage'%}">Send Attendance</a>
                             </li>
                             <li>
-                                <a href="{% url 'teacherhome:sendmessage'%}">Send Report</a>
+                                <a href="{% url 'teacherhome:teacher_homepage'%}">Send Report</a>
                             </li>
                             <li>
-                                <a href="{% url 'teacherhome:sendresult'%}">Send Results</a>
+                                <a href="{% url 'teacherhome:teacher_homepage'%}">Send Results</a>
                             </li>
                         </ul>
                     </li>
@@ -74,7 +74,9 @@
                             <li>    
                                 <a href="{% url 'teacherhome:schedule'%}">Schedule</a>
                             </li>
-                            
+                            <li>    
+                                <a href="{% url 'teacherhome:schedule'%}">Edit Profile</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="">

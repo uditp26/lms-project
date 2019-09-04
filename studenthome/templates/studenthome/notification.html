@@ -1,0 +1,35 @@
+{% extends 'studenthome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Notifications</h1>
+            <h4>See details of notification</h4>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-sm-offset-1 col-sm-8">
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th class="text-center text-uppercase">Date</th>
+                    <th class="text-center text-uppercase">Notification</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tbody>
+                    {% for date, notification in Notification.items %}
+                        <tr>
+                            <td><a href="#">{{ date }}</a></td>
+                            <td>{{ notification }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

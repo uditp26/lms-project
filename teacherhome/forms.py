@@ -1,37 +1,42 @@
 from django.contrib.auth.models import User
 from django import forms
-from .models import Assignment, ClassAttendance, SendMessage, SendResult
+from phonenumber_field.formfields import PhoneNumberField
+from adminhome.models import Teacher 
+from .models import Assignment, Attendance
+from django.forms import formset_factory
 
 class AddassignForm(forms.ModelForm):
-    class_number = forms.TextInput()
-    subject = forms.TextInput()
+    class_number = forms.IntegerField()
+    subject = forms.CharField(max_length = 20)
     start_date = forms.DateTimeField(widget=forms.TextInput(attrs={'class':'datetime-input'}))
     due_date = forms.DateTimeField(widget=forms.TextInput(attrs={'class':'datetime-input'}))
-    assignement_file = forms.FileField()
+    assignment_file = forms.FileField()
 
     class Meta:
         model = Assignment
-        fields = ['class_number', 'subject', 'start_date', 'due_date', 'assignement_file']
+        fields = ['class_number', 'subject', 'start_date', 'due_date', 'assignment_file']
 
-class ClassAttendanceForm(forms.ModelForm):
-    roll_number = forms.TextInput()
-    is_present = forms.TextInput()
-    class Meta:
-        model = ClassAttendance
-        fields = ['roll_number', 'is_present']
-        
-class SendMessageForm(forms.ModelForm):
-    roll_number = forms.TextInput()
-    email_id = forms.CharField(widget=forms.EmailInput)
-    report_message = forms.TextInput()
-    class Meta:
-        model = SendMessage
-        fields = ['roll_number', 'email_id', 'report_message']
+class AttendanceForm(forms.ModelForm):
+    # date = forms.DateTimeField(label='Date', widget=forms.TextInput(attrs={'class':'datetime-input'}))
 
-class SendResultForm(forms.ModelForm):
-    roll_number = forms.TextInput()
-    email_id = forms.CharField(widget=forms.EmailInput)
-    result = forms.FileField()
     class Meta:
-        model = SendResult
-        fields = ['roll_number', 'email_id', 'result']
+        model = Attendance
+        exclude = ['school', 'enrolment_no', 'absent_on']
+
+    def __init__(self, *args, **kwargs):
+        extra = kwargs.pop('extra')
+        super(AttendanceForm, self).__init__(*args, **kwargs)
+
+        choices = [(1, 'Present'), (2, 'Absent')]
+
+        for roll_no in extra:
+            self.fields[roll_no] = forms.ChoiceField(
+            label= roll_no,
+            choices=choices,
+            widget=forms.RadioSelect(),
+        )
+
+    def extra_responses(self):
+
+        for name, value in self.cleaned_data.items():
+            yield (self.fields[name].label, value)
