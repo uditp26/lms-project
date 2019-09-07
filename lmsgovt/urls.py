@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('applogin/', include('applogin.urls')),
     path('adminhome/', include('adminhome.urls')),
+    path('principalhome/', include('principalhome.urls')),
     # url('^', include('django.contrib.auth.urls')),
 ]
 

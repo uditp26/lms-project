@@ -443,6 +443,10 @@ class AddprincipalFormView(View):
                 principal.user = new_user
                 principal.save()
 
+                # For console based output:
+
+                # python -m smtpd -n -c DebuggingServer localhost:1025
+
                 sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
 
                 # Display a message for successful registration

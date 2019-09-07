@@ -66,13 +66,13 @@ class LoginFormView(View):
                 if user.is_active:
                     login(request, user)
                     # redirect to respective page
-                    if radio_btn == 1:
+                    if radio_btn == '1':
                         return redirect('')
-                    elif radio_btn == 2:
+                    elif radio_btn == '2':
                         return redirect('')
-                    elif radio_btn == 3:
-                        return redirect('')
-                    elif radio_btn == 4:
+                    elif radio_btn == '3':
+                        return redirect('principalhome:homepage')
+                    elif radio_btn == '4':
                         return redirect('')
                     else:
                         return redirect('adminhome:homepage')
