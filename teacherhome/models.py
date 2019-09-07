@@ -33,11 +33,13 @@ class Assignment(models.Model):
                                                           
 class Attendance(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)
-    enrolment_no = models.CharField(max_length=20)
+    roll_no = models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
+    study = models.PositiveIntegerField()
     absent_on = models.DateField()
     
     def __str__(self):
-        return self.enrolment_no
+        return str(self.school) +' ' + str(self.absent_on) + ' ' + self.name
                                          
 # The structure of the below table is not appropriately defined.(Just for testing :) ) 
 # class SendAttendance(models.Model):

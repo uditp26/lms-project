@@ -23,15 +23,15 @@
                 </tr>
             </thead>
             <tbody>
-                <tbody>
-                    {% for a_class, a_value in assignment.items %}
-                        <tr>
-                            <td>{{ a_class }}</a></td>
-                            <td>{{ a_value.subject }}</td>
-                            <td>{{ a_value.due_date }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+                
+                {% for a_class, a_value in assignment.items %}
+                    <tr>
+                        <td>{{ a_class }}</a></td>
+                        <td>{{ a_value.subject }}</td>
+                        <td>{{ a_value.due_date }}</td>
+                    </tr>
+                {% endfor %}
+                
             </tbody>
         </table>
     </div>

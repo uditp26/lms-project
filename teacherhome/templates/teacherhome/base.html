@@ -41,29 +41,33 @@
                             <span class="glyphicon glyphicon-book" aria-hidden="true"></span>&nbsp; Assignments
                         </a>
                     </li>
+                    
+                    <!-- need be edit 
+                    from here to-->
                     <li class="">
                         <a href="{% url 'teacherhome:attendance'%}">
-                            <span class="glyphicon glyphicon-user-group" aria-hidden="true"></span>&nbsp; Attendance
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp; Attendance
                         </a>
                     </li>
                     
-                    <li class="dropdown">
-                        <a href="{% url 'teacherhome:teacher_homepage'%}" class="dropdown-toggle" data-toggle="dropdown">&nbsp;<span class="glyphicon glyphicon-email"></span> Send Message <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="{% url 'teacherhome:teacher_homepage'%}">Send Attendance</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'teacherhome:teacher_homepage'%}">Send Report</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'teacherhome:teacher_homepage'%}">Send Results</a>
-                            </li>
-                        </ul>
-                    </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">&nbsp;<span class="glyphicon glyphicon-envelope"></span> Send Message <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="{% url 'teacherhome:absentmsg'%}">Send Attendance</a>
+                                </li>
+                                <li>
+                                    <a href="#">Send Report</a>
+                                </li>
+                                <li>
+                                    <a href="#">Send Results</a>
+                                </li>
+                            </ul>
+                        </li>
+                     <!-- till now -->
                 </ul>
                 
-
+               
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">&nbsp;<span class="glyphicon glyphicon-user"></span> My Profile <span class="caret"></span></a>
@@ -73,9 +77,6 @@
                             </li>
                             <li>    
                                 <a href="{% url 'teacherhome:schedule'%}">Schedule</a>
-                            </li>
-                            <li>    
-                                <a href="{% url 'teacherhome:schedule'%}">Edit Profile</a>
                             </li>
                         </ul>
                     </li>

@@ -21,7 +21,7 @@ class AttendanceForm(forms.ModelForm):
 
     class Meta:
         model = Attendance
-        exclude = ['school', 'enrolment_no', 'absent_on']
+        exclude = ['school', 'absent_on', 'name', 'roll_no', 'study']
 
     def __init__(self, *args, **kwargs):
         extra = kwargs.pop('extra')

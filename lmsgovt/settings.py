@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'applogin.apps.ApploginConfig',
     'teacherhome.apps.TeacherhomeConfig',
     'adminhome.apps.AdminhomeConfig',
-    # 'studenthome.apps.StudenthomeConfig',
+    'studenthome.apps.StudenthomeConfig',
 ]
 
 MIDDLEWARE = [

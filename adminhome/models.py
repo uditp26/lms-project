@@ -78,7 +78,7 @@ class Teacher(models.Model):
     email = models.EmailField()
     address = models.TextField(max_length=500)
     joining_date = models.DateField()
-    is_class_teacher = models.BooleanField(default=False)
+    is_class_teacher = models.BooleanField(default = False)
     class_teacher_of = models.PositiveIntegerField()
     subject = models.CharField(max_length=100, null=True)
     resume = models.FileField(upload_to=get_upload_path, validators=[validate_file_extension])

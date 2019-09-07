@@ -11,6 +11,41 @@ from django.http import Http404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 import datetime
 
+def sendSetPasswordMail(request, new_user, first_name, username, current_user, email):
+
+    current_site = get_current_site(request)
+    domain = current_site.domain
+    uid = urlsafe_base64_encode(force_bytes(new_user.pk))
+    token = default_token_generator.make_token(new_user)
+    protocol = 'http'
+
+    if type(token) != str:
+        token = token[0]
+
+    html_message = loader.render_to_string(
+    'adminhome/user_registration_email.html',
+    {
+        'name': first_name,
+        'username': username,
+        'protocol': protocol,
+        'domain':  domain,
+        'uid': uid,
+        'token': token
+    })
+
+    # print(html_message)
+
+    # re-configure connection/email backend dynamically!
+
+    send_mail(
+        'Account Registration',
+        '',
+        str(current_user),
+        [email],
+        fail_silently=False,
+        html_message=html_message
+    )
+
 class TeacherhomepageView(View):
     template_name = 'teacherhome/teacherhomepage.html'
     
@@ -80,15 +115,19 @@ class AttendanceFormView(View):
         roll_no_list = []
         current_user = request.user
         teacher = Teacher.objects.get(user = current_user)
-        students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
-        school = Teacher.objects.get(school = teacher.school)
         
-        for s in students:
-            roll_no_list.append(s.roll_no)
-        
-        form = self.form_class(request.GET, extra = roll_no_list) 
-        
-        return render(request, self.template_name, {'form': form})
+        if teacher.is_class_teacher:
+            students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
+            school = Teacher.objects.get(school = teacher.school)
+            
+            for s in students:
+                roll_no_list.append(s.roll_no)
+            
+            form = self.form_class(request.GET, extra = roll_no_list) 
+            
+            return render(request, self.template_name, {'form': form})
+        else:
+            return redirect('teacherhome:notallowed')
 
     def post(self, request):
 
@@ -108,17 +147,39 @@ class AttendanceFormView(View):
                 if response == "2":
                     student = Student.objects.get(school = teacher.school, roll_no = label)
                     date = datetime.date.today()
-                    att = Attendance(school = teacher.school, enrolment_no = student.enrolment_no, absent_on = date)
+                    student_name= student.first_name + ' ' +  student.last_name
+                    att = Attendance(school = student.school, roll_no = student.roll_no, absent_on = date, study = student.study, name = student_name)
                     att.save()
-
+                
+            # Show successful upload message and display selected fields in the form
+            # Disable submit button; enable and reset fields next day 
             return redirect('teacherhome:attendance')
 
         return render(request, self.template_name, {'form': form})
 
 class SendAttendanceView(View):
     template_name = 'teacherhome/sendattendance.html'
+    
+    def get(self, request):
+        current_user = request.user    
+        teacher = Teacher.objects.get(user = current_user) 
+
+        bundle = dict()
+        if teacher.is_class_teacher:    
+            absent_date = datetime.date.today()
+            absent = Attendance.objects.filter(school = teacher.school, study = teacher.class_teacher_of, absent_on = absent_date)
+            print(absent)
+            for i in absent:
+                bundle[i.roll_no] = i.name
+            return render(request, self.template_name, {'absent_students': bundle})
+
+        else:
+            return redirect('teacherhome:notallowed')
+
     def post(self, request):
+        #yet to be completed
         return render(request, self.template_name)
+
 
 # class SendMessageView(View):
 #     form_class = SendMessageForm
@@ -137,6 +198,11 @@ class SendAttendanceView(View):
     #         sendmessage.save() # save to the database
         
     # return render(request, self.template_name, {'form': form})
+
+class NotClassTeacherView(View):
+    template_name = 'teacherhome/notclassteacher.html'
+    def get(self, request):
+        return render(request, self.template_name)
 
 class SendResultView(View):
     template_name = 'teacherhome/sendresult_form.html'
