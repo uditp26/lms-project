@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
 from adminhome.models import Teacher 
-from .models import Assignment, Attendance
+from .models import Assignment, Attendance, Marksdetails
 from django.forms import formset_factory
 
 class AddassignForm(forms.ModelForm):
@@ -40,3 +40,27 @@ class AttendanceForm(forms.ModelForm):
 
         for name, value in self.cleaned_data.items():
             yield (self.fields[name].label, value)
+
+
+
+
+# class MarksDetailsForm(forms.ModelForm):
+
+#     class Meta:
+#         model = Marksdetails
+#         exclude = ['school', 'study', 'half_yearly_marks', 'final_marks']
+
+#     def __init__(self, *args, **kwargs):
+#         extra = kwargs.pop('extra')
+#         super(MarksDetailsForm, self).__init__(*args, **kwargs)
+
+#         choices = [(1, 'Present'), (2, 'Absent')]
+
+#         for roll_no_name in extra:
+#             self.fields[roll_no_name] = forms.IntegerField()
+#             self.fields[roll_no_name] = forms.IntegerField()
+
+#     def extra_responses(self):
+
+#         for name, value in self.cleaned_data.items():
+#             yield (self.fields[name].label, value)

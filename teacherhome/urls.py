@@ -15,7 +15,10 @@ urlpatterns = [
     url(r'sendattendance/$', views.SendAttendanceView.as_view(), name='absentmsg'),
     url(r'attendance/$', views.AttendanceFormView.as_view(), name='attendance'),
 
-    # url(r'sendmessage/$', views.SendMessageView.as_view(), name='sendmessage'),
+ 
+
+    # url(r'teachersubject/$', views.MarksView.as_view(), name='teachersubject'),
+    # url(r'teachersubject/<slug:study>/$', views.MarksAddView.as_view(), name='subject'),
 
     url(r'notallowed/$', views.NotClassTeacherView.as_view(), name='notallowed'),
     

@@ -25,39 +25,34 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'studenthome:homepage'%}">App</a>
+            <a class="navbar-brand" href="{% url 'studenthome:studenthome'%}">App</a>
             </div>
     
             <div class="collapse navbar-collapse" id="topNavBar">
                 <ul class="nav navbar-nav">
                     <li class="active">
-                        <a href="{% url 'studenthome:homepage'%}">
+                        <a href="{% url 'studenthome:studenthome'%}">
                             <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp; Home
                         </a>
                     </li>
                     <li class="">
-                        <a href="{% url 'studenthome:assignment'%}">
-                            <span class="glyphicon glyphicon-education" aria-hidden="true"></span>&nbsp; Assignments
+                        <a href="{% url 'studenthome:currentassignment'%}">
+                            <span class="glyphicon glyphicon-education" aria-hidden="true"></span>&nbsp;View Assignments
                         </a>
                     </li>
                     <li class="">
-                        <a href="{% url 'studenthome:notification'%}">
-                            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>&nbsp; Notifications
+                        <a href="{% url 'studenthome:studenthome'%}">
+                            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>&nbsp;View Notifications
                         </a>
                     </li>
                     <li class="">
                         <a href="{% url 'studenthome:attendance'%}">
-                            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>&nbsp; Attendance
+                            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>&nbsp;View Attendance
                         </a>
                     </li>
                 </ul>
                 
-                <!-- <form class="navbar-form navbar-left" role="search" method="get" action="#">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="q" value="">
-                    </div>
-                    <button type="submit" class="btn btn-default">Search</button>
-                </form> -->
+    
     
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">

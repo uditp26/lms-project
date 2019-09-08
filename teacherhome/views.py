@@ -2,7 +2,7 @@ from django.shortcuts import render, reverse, redirect
 from django.views import generic, View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import logout
-from .models import Assignment, Attendance
+from .models import Assignment, Attendance, Marksdetails
 from .forms import AddassignForm, AttendanceForm
 from adminhome.models import School, Student, Teacher
 from collections import defaultdict
@@ -10,6 +10,11 @@ from django.urls import reverse_lazy
 from django.http import Http404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 import datetime
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
+
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http:/127.0.0.1:8000/applogin/')]
 
 def sendSetPasswordMail(request, new_user, first_name, username, current_user, email):
 
@@ -45,7 +50,7 @@ def sendSetPasswordMail(request, new_user, first_name, username, current_user, e
         fail_silently=False,
         html_message=html_message
     )
-
+@method_decorator(decorators, name='dispatch')
 class TeacherhomepageView(View):
     template_name = 'teacherhome/teacherhomepage.html'
     
@@ -66,6 +71,8 @@ class TeacherhomepageView(View):
                 bundle = {'name':name, 'subject': subject}
                 return render(request, self.template_name, {'teacher':bundle})
 
+
+@method_decorator(decorators, name='dispatch')
 class AddassignFormView(View):
     form_class = AddassignForm
     template_name = 'teacherhome/addassign_form.html'
@@ -83,13 +90,17 @@ class AddassignFormView(View):
         if form.is_valid():
             addassign = form.save(commit = False)
             subject = teacher.subject
+
             assignment_no = len(Assignment.objects.filter(assigned_by=teacher, subject=subject)) + 1
             addassign.assign_number = assignment_no
-            addassign.assigned_by = teacher
+            addassign.assigned_by = teacher.first_name+ ' '+ teacher.last_name
+            addassign.school = teacher.school
             addassign.save() 
             return redirect('teacherhome:view_assign')
         return render(request, self.template_name, {'form': form})  
 
+
+@method_decorator(decorators, name='dispatch')
 class AssignmentView(View):
     template_name = 'teacherhome/assignment_view.html'
 
@@ -97,14 +108,9 @@ class AssignmentView(View):
         current_user = request.user
         teacher = Teacher.objects.get(user = current_user)  
         assignment = Assignment.objects.filter(assigned_by=teacher)
+        return render(request, self.template_name, {'assignment': assignment})
 
-        bundle = dict()
-        for a in assignment:
-            a_class = a.class_number
-            bundle[a_class] = a 
-
-        return render(request, self.template_name, {'assignment': bundle})
-
+@method_decorator(decorators, name='dispatch')
 class AttendanceFormView(View):
     form_class = AttendanceForm
     template_name = 'teacherhome/attendance_form.html'
@@ -157,9 +163,9 @@ class AttendanceFormView(View):
 
         return render(request, self.template_name, {'form': form})
 
+@method_decorator(decorators, name='dispatch')
 class SendAttendanceView(View):
     template_name = 'teacherhome/sendattendance.html'
-    
     def get(self, request):
         current_user = request.user    
         teacher = Teacher.objects.get(user = current_user) 
@@ -181,6 +187,58 @@ class SendAttendanceView(View):
         return render(request, self.template_name)
 
 
+@method_decorator(decorators, name='dispatch')
+class MarksView(View):
+    template_name = 'teacherhome/marks.html'
+    
+    def get(self, request):
+        current_user = request.user    
+        teacher = Teacher.objects.get(user = current_user) 
+        study = teacher.class_teacher_of
+        subject = teacher.subject
+        teacher_subject = dict()
+        teacher_subject[study] = subject
+        return render(request, self.template_name, {'teacher_subject': teacher_subject})
+
+@method_decorator(decorators, name='dispatch')
+class MarksAddView(View):
+    template_name = 'teacherhome/marksadd.html'
+
+    def get(self, request, studysubject):
+        current_user = request.user    
+        teacher = Teacher.objects.get(user = current_user) 
+        students = Student.objects.filter(school = techer.school , study = teacher.class_teacher_of)
+        marks_details = Marksdetails()
+        for s in  students:
+            marks_details.name = s.first_name+ ' '+s.last_name 
+            marks_details.roll_no = s.roll_no
+            marks_details.study = s.study
+            marks_details.school = s.school
+
+        marks_details.save()
+        return render(request, self.template_name, {'marks_details': marks_details})
+        
+# Add marks form
+# class MarksDetailsFormView(View):
+#     template_name = 'teacherhome/marks_details.html'
+    
+#     def get(self, request):        
+#         current_user = request.user
+#         teacher = Teacher.objects.get(user = current_user)
+#         students = Student.objects.filter(school = techer.school , study = teacher.class_teacher_of)
+
+#         return render(request, self.template_name, {'students': students})
+
+# class MarksDetailsView(View):
+#     template_name = 'teacherhome/marks_details-form.html'
+
+#     def get(self, request):
+#         current_user = request.user    
+#         teacher = Teacher.objects.get(user = current_user) 
+#         students = Student.objects.filter(school = techer.school , study = teacher.class_teacher_of)
+#         return render(request, self.template_name, {'teacher': teacher})
+
+
 # class SendMessageView(View):
 #     form_class = SendMessageForm
 #     template_name = 'teacherhome/sendmessage_form.html'
@@ -199,11 +257,13 @@ class SendAttendanceView(View):
         
     # return render(request, self.template_name, {'form': form})
 
+@method_decorator(decorators, name='dispatch')
 class NotClassTeacherView(View):
     template_name = 'teacherhome/notclassteacher.html'
     def get(self, request):
         return render(request, self.template_name)
 
+@method_decorator(decorators, name='dispatch')
 class SendResultView(View):
     template_name = 'teacherhome/sendresult_form.html'
     def get(self, request):
@@ -222,6 +282,7 @@ class ScheduleView(View):
         current_user = request.user
         return render(request, self.template_name, {'current_user': current_user})
 
+@method_decorator(decorators, name='dispatch')
 class LogoutView(View):
     template_name = 'applogin/login.html'
     def get(self, request):

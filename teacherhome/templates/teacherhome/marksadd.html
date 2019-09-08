@@ -1,0 +1,41 @@
+{% extends 'teacherhome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Add marks</h1>
+    </div>
+</div>
+
+<div class="container">
+    <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="col-sm-offset-1 col-sm-8">     
+            <table class="table table-striped table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th class="text-center text-uppercase">studnet Name</th>
+                        <th class="text-center text-uppercase">Roll no</th>
+                        <th class="text-center text-uppercase">Half-yearly Examination Marks</th>
+                        <th class="text-center text-uppercase">Final Examination Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in marks_details %}
+                        <tr>
+                            <td>{{ i.name }}</td>
+                            <td>{{ i.roll_no }}</td>
+                            <td>{{ i.half_yearly_marks }}</td>
+                            <td>{{ i.final_marks }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>  
+        </div>
+        <div class="col-sm-offset-3 col-sm-1">
+            <button type="submit" class="btn btn-success">Add Marks</button>
+        </div>
+    </form>
+</div> 
+{% endblock %}

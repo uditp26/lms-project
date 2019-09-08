@@ -5,7 +5,7 @@ from adminhome.models import School, Teacher, Student
 import os
 
 def get_upload_path(instance, filename):
-    path = 'media/' + instance.assigned_by.school.school_code
+    path = 'media/' + instance.school.school_code
     # name =  instance.first_name + '_' + instance.last_name + '/'
     rel_dir = ''
     
@@ -14,7 +14,7 @@ def get_upload_path(instance, filename):
         rel_dir = '/Assignment/' + str(instance.class_number)+'/' + str(instance.subject)+'/' # + str(instance.assign_number)+'/'
 
     os.makedirs(os.path.join(path), exist_ok=True)
-    rel_path = instance.assigned_by.school.school_code + rel_dir
+    rel_path = instance.school.school_code + rel_dir
 
     format1 = str(instance.subject) + str(instance.assign_number) + '.pdf'
     return os.path.join(rel_path, format1)
@@ -22,7 +22,8 @@ def get_upload_path(instance, filename):
 class Assignment(models.Model):
     class_number = models.IntegerField()
     subject = models.CharField(max_length = 30)
-    assigned_by = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
+    assigned_by = models.CharField(max_length = 30)
+    school = models.ForeignKey(School, on_delete=models.DO_NOTHING)
     assign_number = models.IntegerField()
     start_date = models.DateField()      
     due_date = models.DateField()
@@ -40,7 +41,21 @@ class Attendance(models.Model):
     
     def __str__(self):
         return str(self.school) +' ' + str(self.absent_on) + ' ' + self.name
-                                         
+
+class Marksdetails(models.Model):
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    study = models.PositiveIntegerField()
+    roll_no = models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
+    half_yearly_marks = models.PositiveIntegerField(default=0, blank=True, null=True)
+    final_marks = models.PositiveIntegerField(default=0, blank=True, null=True)
+    
+    def __str__(self):
+        return self.name
+
+    def name_to_url(self):
+        return self.study + '-' + self.roll_no
+
 # The structure of the below table is not appropriately defined.(Just for testing :) ) 
 # class SendAttendance(models.Model):
 #     roll_number = models.CharField(max_length = 1000)

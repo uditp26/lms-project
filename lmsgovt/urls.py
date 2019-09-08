@@ -23,7 +23,7 @@ urlpatterns = [
     path('applogin/', include('applogin.urls')),
     path('teacherhome/', include('teacherhome.urls')),
     path('adminhome/', include('adminhome.urls')),
-    path('studenthomepage/', include('studenthome.urls')),
+    path('studenthome/', include('studenthome.urls')),
 ]
 
 if settings.DEBUG:

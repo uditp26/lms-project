@@ -70,7 +70,7 @@ class LoginFormView(View):
                     login(request, user)
                     # redirect to respective page
                     if radio_btn == '1':
-                        return redirect('studenthome:studenthomepage')
+                        return redirect('studenthome:studenthome')
                     elif radio_btn == '2':
                         return redirect('teacherhome:teacher_homepage')
                     elif radio_btn == '3': 

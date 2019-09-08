@@ -4,8 +4,7 @@
 
 <div style="padding-top: 10px; padding-bottom: 10px">
     <div class="container" style=" height: 120px; background-color: lightcyan">
-            <h1>Students</h1>
-            <h4>List of all assignment</h4>
+            <h1>Previous Assignments</h1>
     </div>
 </div>
 
@@ -20,9 +19,9 @@
             </thead>
             <tbody>
                 <tbody>
-                    {% for subject, due in Assignment.items %}
+                    {% for due, subject in bundle.items %}
                         <tr>
-                            <td><a href="#">{{ subject }}</a></td>
+                            <td>{{ subject }}</td>
                             <td>{{ due }}</td>
                         </tr>
                     {% endfor %}
@@ -31,6 +30,5 @@
         </table>
     </div>
 </div>
-
 
 {% endblock %}
