@@ -122,6 +122,13 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+# User not to be referred directly but as stated below.
+
+# from django.conf import settings
+# settings.AUTH_USER_MODEL
+
+AUTH_USER_MODEL = 'applogin.User'
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -143,3 +150,5 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/applogin/'

@@ -1,5 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+
+# from django.contrib.auth.models import User
+from applogin.models import User
+
 from phonenumber_field.modelfields import PhoneNumberField
 from .validators import validate_file_extension
 import os

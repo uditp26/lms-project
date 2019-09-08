@@ -6,7 +6,6 @@ app_name = 'principalhome'
 
 urlpatterns = [
     url(r'^$', views.HomepageView.as_view(), name='homepage'),
-    url(r'logout/$', views.LogoutView.as_view(), name='logout'),
     url(r'students/$', views.StudentView.as_view(), name='students'),
     path('students/<slug:clss>/', views.StudentIndexView.as_view(), name='class_students'),
     path('students/<slug:clss>/<slug:student>/', views.StudentDetailView.as_view(), name='students_detail'),
