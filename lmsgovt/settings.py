@@ -49,12 +49,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
+    # 'rest_framework',
     'applogin.apps.ApploginConfig',
+    'teacherhome.apps.TeacherhomeConfig',
     'adminhome.apps.AdminhomeConfig',
     'principalhome.apps.PrincipalhomeConfig',
+    'studenthome.apps.StudenthomeConfig',
     'django_cleanup',
 ]
 

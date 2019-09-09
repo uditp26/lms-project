@@ -207,6 +207,7 @@ class AddstudentFormView(View):
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             email = form.cleaned_data['email']
+            study = form.cleaned_data['study']
 
             new_user, username = createNewUser(email, first_name, last_name, 1)
 
@@ -215,21 +216,18 @@ class AddstudentFormView(View):
 
             all_students = len(Student.objects.filter(school=school).filter(enrolment_no__startswith=prefix))
             enrolment_no = prefix + '' + str(all_students + 1)
-
             student.enrolment_no = enrolment_no
-
             student.school = school
             student.user = new_user
-            
-            student.save()
 
+            s_roll =  ""
+            s_roll = s_roll + str(study)
+            no_student = len(Student.objects.filter(school = school, study= study))  + 1
+            student.roll_no = s_roll + str(no_student)
+
+            student.save()
             sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
             
-            # Display a message for successful registration 
-
-            # messages.add_message(request, messages.INFO, 'Student registered.')
-            # return render(request, self.template_name, {'student_flag': True})
-
             return redirect('adminhome:students')
 
         return render(request, self.template_name, {'form': form})
@@ -307,9 +305,7 @@ class AddteacherFormView(View):
         current_user = request.user
 
         if form.is_valid():
-
             # class_taecher_of field should be enforced only when is_class_teacher is selected!
-
             teacher = form.save(commit=False)
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
@@ -318,6 +314,7 @@ class AddteacherFormView(View):
             new_user, username = createNewUser(email, first_name, last_name, 2)
 
             school = School.objects.get(school_admin=current_user)
+            # print("school_type : ", type(school))
 
             teacher.school = school
             teacher.user = new_user

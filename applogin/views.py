@@ -1,25 +1,14 @@
 from django.views import View
 from django.shortcuts import render, redirect, HttpResponseRedirect, reverse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, RequestpwdForm, ResetpwdForm, RegistrationForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth import logout
 from django.views import generic
 from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.mail import send_mail
-
-# from django.contrib.auth.models import User
-
 from django.conf import settings
-
 from django.http import HttpResponse
 from django import forms
-from adminhome.models import School
-
-
-from urllib.parse import urlparse, urlunparse
-
-from .models import User
 
 from django.contrib.auth import (
     REDIRECT_FIELD_NAME, get_user_model, login as auth_login,
@@ -40,6 +29,12 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+
+from urllib.parse import urlparse, urlunparse
+
+from .forms import LoginForm, RequestpwdForm, ResetpwdForm, RegistrationForm, PasswordResetForm, SetPasswordForm
+from adminhome.models import School
+from .models import User
 
 UserModel = get_user_model()
 
@@ -74,13 +69,15 @@ class LoginFormView(View):
                     login(request, user)
                     # redirect to respective page
                     if radio_btn == '1':
-                        return redirect('')
+                        return redirect('studenthome:studenthome')
                     elif radio_btn == '2':
-                        return redirect('')
+                        return redirect('teacherhome:teacher_homepage')
                     elif radio_btn == '3':
                         return redirect('principalhome:homepage')
                     else:
                         return redirect('adminhome:homepage')
+                    # Add else condition
+                        # return HttpResponseRedirect(reverse('adminhome:homepage', args=(username,)))
                 else:
                     form.add_error('username', "User does not exist.")
             else:

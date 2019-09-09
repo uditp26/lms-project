@@ -1,0 +1,35 @@
+{% extends 'teacherhome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Send Attendance</h1>
+            <h4>Inform parents about students's attendance.</h4>
+    </div>
+</div>
+<div class="container">
+    <div class="col-sm-offset-1 col-sm-8">
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th class="text-center text-uppercase">Roll no</th>
+                    <th class="text-center text-uppercase"> Name </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for Rollno, name in absent_students.items %}
+                    <tr>
+                        <td>{{ Rollno }}</a></td>
+                        <td>{{ name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="col-sm-offset-10 col-sm-1">
+            <button type="submit" class="btn btn-success">Send</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

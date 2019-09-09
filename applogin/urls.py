@@ -1,5 +1,6 @@
 from django.conf.urls import url, include
 from . import views
+from django.contrib.auth import views as auth_views
 
 app_name = 'applogin'
 
