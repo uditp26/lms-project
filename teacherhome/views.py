@@ -93,7 +93,6 @@ class AttendanceFormView(View):
         
         if teacher.is_class_teacher:
             students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
-            school = Teacher.objects.get(school = teacher.school)
             
             for s in students:
                 roll_no_list.append(s.roll_no)
@@ -301,13 +300,4 @@ class LogoutView(View):
 class TeacherUpdateView(UpdateView):
     model = Teacher
     fields = ['first_name', 'last_name', 'date_of_birth', 'joining_date', 'email', 'phone', 'is_class_teacher', 'subject', 'resume']
-
-
-
-
-
-
-
-
-
 
