@@ -15,6 +15,9 @@ urlpatterns = [
     url(r'sendattendance/$', views.SendAttendanceView.as_view(), name='absentmsg'),
     url(r'attendance/$', views.AttendanceFormView.as_view(), name='attendance'),
 
+    url(r'announcement/$', views.AnnouncementView.as_view(), name='announcement'),
+    path('announcement/<slug:announcement>/', views.AnnouncementDetailView.as_view(), name='announcement_detail'),
+
  
 
     # url(r'teachersubject/$', views.MarksView.as_view(), name='teachersubject'),

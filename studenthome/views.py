@@ -10,6 +10,8 @@ from applogin.models import User
 
 from adminhome.models import Teacher, School, Student
 from teacherhome.models import Attendance, Assignment
+from principalhome.models import Announcement
+
 from time import gmtime, strftime
 import datetime
 import mimetypes
@@ -102,7 +104,41 @@ class LogoutView(View):
         logout(request)
         return HttpResponseRedirect(reverse('applogin:login'))
 
+@method_decorator(decorators, name='dispatch')
+class AnnouncementView(View):
+    template_name = 'studenthome/announcements.html'
 
+    def get(self, request):
+        current_user = request.user
+        if str(current_user) is 'AnonymousUser':
+            raise Http404
+        else:
+            # student = Student.objects.get(user = current_user)
+            current_date = datetime.date.today()
+            announcement_type1 = Announcement.objects.filter(audience="Students", expiry_date__gte = current_date)
+            announcement_type2 = Announcement.objects.filter(audience="All", expiry_date__gte = current_date)
+            
+            announcements = announcement_type1 | announcement_type2
+
+            return render(request, self.template_name, {'announcements': announcements})
+
+@method_decorator(decorators, name='dispatch')
+class AnnouncementDetailView(View):
+    template_name = 'studenthome/announcement_detail.html'
+
+    def get(self, request, announcement):
+        current_user = request.user
+        if str(current_user) is 'AnonymousUser':
+            raise Http404
+        else:
+            school = request.user.school
+            principal = Principal.objects.get(school = school)
+           
+            announcement1 = Announcement.objects.get(announcer = principal, audience="Students")
+            announcement2 = Announcement.objects.get(announcer = principal, audience="All")
+            announcement = announcement1 | announcement2
+
+            return render(request, self.template_name, {'announcement': announcement})
 
 def index(request):
     text = request.GET.get("name")
