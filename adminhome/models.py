@@ -69,8 +69,8 @@ class Student(models.Model):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
-    def name_to_url(self):
-        return self.first_name + '-' + self.last_name
+    # def name_to_url(self):
+    #     return self.first_name + '-' + self.last_name
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -91,8 +91,8 @@ class Teacher(models.Model):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
-    def name_to_url(self):
-        return self.first_name + '-' + self.last_name
+    # def name_to_url(self):
+    #     return self.first_name + '-' + self.last_name
 
 class Principal(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

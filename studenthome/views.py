@@ -8,7 +8,7 @@ import os
 # from django.contrib.auth.models import User
 from applogin.models import User
 
-from adminhome.models import Teacher, School, Student
+from adminhome.models import Teacher, School, Student, Principal
 from teacherhome.models import Attendance, Assignment
 from principalhome.models import Announcement
 

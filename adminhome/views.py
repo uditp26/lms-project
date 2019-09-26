@@ -254,17 +254,17 @@ class StudentIndexView(View):
 class StudentDetailView(View):
     template_name = 'adminhome/students_detail.html'
 
-    def get(self, request, clss, student):
+    def get(self, request, clss, enrolment_no):
         current_user = request.user
         if str(current_user) is 'AnonymousUser':
             raise Http404
         else:
             school = request.user.school
             study = int(clss[6:])
-            stud_arr = student.split('-')
-            fname = stud_arr[0]
-            lname = stud_arr[1]
-            student = Student.objects.get(school=school, study=study, first_name=fname, last_name=lname)
+            # stud_arr = student.split('-')
+            # fname = stud_arr[0]
+            # lname = stud_arr[1]
+            student = Student.objects.get(school=school, study=study, enrolment_no=enrolment_no)
             return render(request, self.template_name, {'student':student})    
 
 @method_decorator(decorators, name='dispatch')
@@ -333,16 +333,14 @@ class AddteacherFormView(View):
 class TeacherDetailView(View):
     template_name = 'adminhome/teachers_detail.html'
 
-    def get(self, request, teacher):
+    def get(self, request, username):
         current_user = request.user
         if str(current_user) is 'AnonymousUser':
             raise Http404
         else:
             school = request.user.school
-            name_arr = teacher.split('-')
-            fname = name_arr[0]
-            lname = name_arr[1]
-            teacher = Teacher.objects.get(school=school, first_name=fname, last_name=lname)
+            t_user = User.objects.get(username=username)
+            teacher = Teacher.objects.get(user=t_user)
             return render(request, self.template_name, {'teacher': teacher})
 
 @method_decorator(decorators, name='dispatch')

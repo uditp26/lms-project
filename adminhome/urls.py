@@ -12,10 +12,10 @@ urlpatterns = [
     url(r'students/$', views.StudentView.as_view(), name='students'),
     url(r'students/addstudent/$', views.AddstudentFormView.as_view(), name='addstudent'),
     path('students/<slug:clss>/', views.StudentIndexView.as_view(), name='class_students'),
-    path('students/<slug:clss>/<slug:student>/', views.StudentDetailView.as_view(), name='students_detail'),
+    path('students/<slug:clss>/<slug:enrolment_no>/', views.StudentDetailView.as_view(), name='students_detail'),
     url(r'teachers/$', views.TeacherView.as_view(), name='teachers'),
     url(r'teachers/addteacher/$', views.AddteacherFormView.as_view(), name='addteacher'),
-    path('teachers/<slug:teacher>/', views.TeacherDetailView.as_view(), name='teachers_detail'),
+    path('teachers/<slug:username>/', views.TeacherDetailView.as_view(), name='teachers_detail'),
     url(r'principal/$', views.PrincipalView.as_view(), name='principal'),
     url(r'principal/addPrincipal/$', views.AddprincipalFormView.as_view(), name='addPrincipal'),
 
