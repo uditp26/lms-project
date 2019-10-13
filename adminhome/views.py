@@ -137,26 +137,30 @@ class RegisterschoolFormView(View):
             state = form.cleaned_data['state']
             pincode = form.cleaned_data['pincode']
 
-            school = School.objects.get(school_admin=current_user.pk)
-            school.school_name = school_name
-            school.class_upto = class_upto
-            school.address= address
-            school.city = city
-            school.district = district
-            school.state = state
-            school.pincode = pincode
-            school.is_registered = True
-            school.has_principal = False
+            try:
+                old_school = School.objects.get(school_name=school_name, class_upto=class_upto, address=address, city=city, district=district, state=state, pincode=pincode)
+                form.add_error('school_name', 'School already exists. Current Admin: ' + str(old_school.school_admin))
+            except:
+                school = School.objects.get(school_admin=current_user.pk)
+                school.school_name = school_name
+                school.class_upto = class_upto
+                school.address= address
+                school.city = city
+                school.district = district
+                school.state = state
+                school.pincode = pincode
+                school.is_registered = True
+                school.has_principal = False
 
-            school.save()
+                school.save()
 
-            dir_name = school.school_code + '/'
-            os.mkdir(os.path.join('media/', dir_name))
-            os.mkdir(os.path.join('media/' + dir_name, 'Teachers/'))
-            os.mkdir(os.path.join('media/' + dir_name, 'Students/'))
-            os.mkdir(os.path.join('media/' + dir_name, 'Principal/'))
+                dir_name = school.school_code + '/'
+                os.mkdir(os.path.join('media/', dir_name))
+                os.mkdir(os.path.join('media/' + dir_name, 'Teachers/'))
+                os.mkdir(os.path.join('media/' + dir_name, 'Students/'))
+                os.mkdir(os.path.join('media/' + dir_name, 'Principal/'))
 
-            return redirect('adminhome:homepage')
+                return redirect('adminhome:homepage')
 
         return render(request, self.template_name, {'form': form})
 
@@ -208,27 +212,32 @@ class AddstudentFormView(View):
             last_name = form.cleaned_data['last_name']
             email = form.cleaned_data['email']
             study = form.cleaned_data['study']
+            date_of_birth = form.cleaned_data['date_of_birth']
+            admission_date = form.cleaned_data['admission_date']
 
-            new_user, username = createNewUser(email, first_name, last_name, 1)
+            if admission_date <= date_of_birth:
+                form.add_error('admission_date', 'Admission date can\'t be earlier than DOB.')
+            else:
+                new_user, username = createNewUser(email, first_name, last_name, 1)
 
-            school = School.objects.get(school_admin=current_user)
-            prefix = str(form.cleaned_data['admission_date'])[:4]
+                school = School.objects.get(school_admin=current_user)
+                prefix = str(form.cleaned_data['admission_date'])[:4]
 
-            all_students = len(Student.objects.filter(school=school).filter(enrolment_no__startswith=prefix))
-            enrolment_no = prefix + '' + str(all_students + 1)
-            student.enrolment_no = enrolment_no
-            student.school = school
-            student.user = new_user
+                all_students = len(Student.objects.filter(school=school).filter(enrolment_no__startswith=prefix))
+                enrolment_no = prefix + '' + str(all_students + 1)
+                student.enrolment_no = enrolment_no
+                student.school = school
+                student.user = new_user
 
-            s_roll =  ""
-            s_roll = s_roll + str(study)
-            no_student = len(Student.objects.filter(school = school, study= study))  + 1
-            student.roll_no = s_roll + str(no_student)
+                s_roll =  ""
+                s_roll = s_roll + str(study)
+                no_student = len(Student.objects.filter(school = school, study= study))  + 1
+                student.roll_no = s_roll + str(no_student)
 
-            student.save()
-            sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
+                student.save()
+                sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
             
-            return redirect('adminhome:students')
+                return redirect('adminhome:students')
 
         return render(request, self.template_name, {'form': form})
 
@@ -305,27 +314,37 @@ class AddteacherFormView(View):
         current_user = request.user
 
         if form.is_valid():
-            # class_taecher_of field should be enforced only when is_class_teacher is selected!
-            teacher = form.save(commit=False)
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            email = form.cleaned_data['email']
-
-            new_user, username = createNewUser(email, first_name, last_name, 2)
-
-            school = School.objects.get(school_admin=current_user)
-            # print("school_type : ", type(school))
-
-            teacher.school = school
-            teacher.user = new_user
-
-            teacher.save()
-
-            sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
             
-            # Display a message for successful registration
+            is_class_teacher = form.cleaned_data['is_class_teacher']
+            class_teacher_of = form.cleaned_data['class_teacher_of']
+            date_of_birth = form.cleaned_data['date_of_birth']
+            joining_date = form.cleaned_data['joining_date']
 
-            return redirect('adminhome:teachers')
+            if is_class_teacher is True and class_teacher_of is None:
+                form.add_error('class_teacher_of', 'Please specify the class taught by the class teacher.')
+            elif joining_date <= date_of_birth:
+                form.add_error('joining_date', 'Joining date can\'t be earlier than DOB.')
+            else:
+                teacher = form.save(commit=False)
+                first_name = form.cleaned_data['first_name']
+                last_name = form.cleaned_data['last_name']
+                email = form.cleaned_data['email']
+
+                new_user, username = createNewUser(email, first_name, last_name, 2)
+
+                school = School.objects.get(school_admin=current_user)
+                # print("school_type : ", type(school))
+
+                teacher.school = school
+                teacher.user = new_user
+
+                teacher.save()
+
+                sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
+                
+                # Display a message for successful registration
+
+                return redirect('adminhome:teachers')
 
         return render(request, self.template_name, {'form': form})
 
@@ -389,29 +408,34 @@ class AddprincipalFormView(View):
 
             is_teacher = form.cleaned_data['is_teacher']
             subject = form.cleaned_data['subject']
+            date_of_birth = form.cleaned_data['date_of_birth']
+            joining_date = form.cleaned_data['joining_date']
 
-            if is_teacher is False or is_teacher is True and subject != "":
-                school = School.objects.get(school_admin=current_user)
+            if joining_date <= date_of_birth:
+                form.add_error('joining_date', 'Joining date can\'t be earlier than DOB.')
+            else: 
+                if is_teacher is False or is_teacher is True and subject != "":
+                    school = School.objects.get(school_admin=current_user)
 
-                school.has_principal = True
-                school.save()
+                    school.has_principal = True
+                    school.save()
 
-                first_name = form.cleaned_data['first_name']
-                last_name = form.cleaned_data['last_name']
-                email = form.cleaned_data['email']
+                    first_name = form.cleaned_data['first_name']
+                    last_name = form.cleaned_data['last_name']
+                    email = form.cleaned_data['email']
 
-                new_user, username = createNewUser(email, first_name, last_name, 3)
+                    new_user, username = createNewUser(email, first_name, last_name, 3)
 
-                principal.school = school
-                principal.user = new_user
-                principal.save()
+                    principal.school = school
+                    principal.user = new_user
+                    principal.save()
 
-                sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
+                    sendSetPasswordMail(request, new_user, first_name, username, current_user, email)
 
-                # Display a message for successful registration
-                
-                return redirect('adminhome:principal')
-            else:
-                form.add_error('subject', "Subject field can't be empty.")
+                    # Display a message for successful registration
+                    
+                    return redirect('adminhome:principal')
+                else:
+                    form.add_error('subject', "Subject field can't be empty.")
 
         return render(request, self.template_name, {'form': form})

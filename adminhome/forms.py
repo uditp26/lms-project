@@ -9,13 +9,13 @@ from phonenumber_field.formfields import PhoneNumberField
 
 class RegisterschoolForm(forms.ModelForm):
     school_name = forms.CharField(max_length=500)
-    class_upto = forms.IntegerField()
+    class_upto = forms.IntegerField(min_value=5, max_value=12)
     address = forms.Textarea()
     city = forms.CharField(max_length = 50)
     district = forms.CharField(max_length = 50)
     state = forms.CharField(max_length = 50)
     # filling address fields based on pincode
-    pincode = forms.IntegerField()
+    pincode = forms.IntegerField(min_value=100000, max_value=999999)
 
     class Meta:
         model = School
@@ -28,7 +28,7 @@ class AddstudentForm(forms.ModelForm):
     admission_date = forms.DateTimeField(widget=forms.TextInput(attrs={'class':'datetime-input'}))
     email = forms.EmailInput()
     address = forms.Textarea()
-    study = forms.NumberInput()
+    study = forms.IntegerField(max_value=12, min_value=1)
 
     class Meta:
         model = Student
@@ -43,7 +43,7 @@ class AddteacherForm(forms.ModelForm):
     address = forms.Textarea()
     phone = PhoneNumberField(widget=forms.TextInput(), required=False)
     is_class_teacher = forms.BooleanField(required=False)
-    class_teacher_of = forms.NumberInput()
+    class_teacher_of = forms.IntegerField(min_value=1, max_value=12, required=False)
     subject = forms.TextInput()
     resume = forms.FileField()
 

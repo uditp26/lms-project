@@ -38,7 +38,7 @@ class School(models.Model):
     pincode = models.PositiveIntegerField(null=True)
 
     def __str__(self):
-        return self.school_name
+        return self.school_code
 
 
 class LocalAdmin(models.Model):
@@ -82,7 +82,7 @@ class Teacher(models.Model):
     address = models.TextField(max_length=500)
     joining_date = models.DateField()
     is_class_teacher = models.BooleanField(default=False)
-    class_teacher_of = models.PositiveIntegerField()
+    class_teacher_of = models.IntegerField(null=True)
     subject = models.CharField(max_length=100, null=True)
     resume = models.FileField(upload_to=get_upload_path, validators=[validate_file_extension])
     school = models.ForeignKey(School, on_delete=models.CASCADE)
