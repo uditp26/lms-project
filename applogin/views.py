@@ -85,6 +85,13 @@ class LoginFormView(View):
 
         return render(request, self.template_name, {'form': form})
 
+def checkExistingUsers(email):
+    try:
+        User.objects.get(email=email)
+        return True
+    except:
+        return False
+
 class RegistrationFormView(View):
     form_class = RegistrationForm
     template_name = 'applogin/registration_form.html'
@@ -104,23 +111,28 @@ class RegistrationFormView(View):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             confpwd = form.cleaned_data['password2']
+            email = form.cleaned_data['email']
 
             if password == confpwd:
-                form_obj.save()
+                flag = checkExistingUsers(email)
+                if flag == False:
+                    form_obj.save()
 
-                user = User.objects.get(username=username)
+                    user = User.objects.get(username=username)
 
-                user.user_type = 4
-                user.save()
+                    user.user_type = 4
+                    user.save()
 
-                # generate a unique school code as primary key
-                all_schools = School.objects.all()
-                school_code = 'SCH' + '' + str(len(all_schools) + 1)
-                school = School(school_code=school_code, school_admin=user)
+                    # generate a unique school code as primary key
+                    all_schools = School.objects.all()
+                    school_code = 'SCH' + '' + str(len(all_schools) + 1)
+                    school = School(school_code=school_code, school_admin=user)
                 
-                school.save()
+                    school.save()
                 
-                return render(request, 'applogin/registrationsuccess.html', {'form': form})
+                    return render(request, 'applogin/registrationsuccess.html', {'form': form})
+                else:
+                    form.add_error('email', 'A user is already registered with this email.')
             else:
                 form.add_error('confirm_password', "Password fields do not match.")
 

@@ -8,19 +8,7 @@ from .validators import validate_file_extension
 import os
 
 def get_upload_path(instance, filename):
-    path = 'media/' + instance.school.school_code
-    name =  instance.first_name + '_' + instance.last_name + '/'
-    rel_dir = ''
-
-    if type(instance) == Teacher:
-        path += '/Teachers/'
-        rel_dir = '/Teachers/'
-    elif type(instance) == Principal:
-        path += '/Principal/'
-        rel_dir = '/Principal/'
-    os.makedirs(os.path.join(path, name), exist_ok=True)
-    rel_path = instance.school.school_code + rel_dir + name
-    return os.path.join(rel_path, filename)
+    return 'resume/' + 'user_{0}/{1}'.format(instance.user.id, filename)
 
 class School(models.Model):
     school_code = models.CharField(max_length=20)

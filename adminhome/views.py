@@ -9,7 +9,6 @@ from applogin.models import User
 
 from django.http import Http404
 from django.core.mail import send_mail
-import os
 # from django.contrib import messages
 
 from django.contrib.sites.shortcuts import get_current_site
@@ -30,7 +29,7 @@ from random import *
 min_char = 8
 max_char = 12
 
-decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://127.0.0.1:8000/applogin/')]
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
 
 def createNewUser(email, first_name, last_name, u_type):
     username = email.split('@')[0]
@@ -153,12 +152,6 @@ class RegisterschoolFormView(View):
                 school.has_principal = False
 
                 school.save()
-
-                dir_name = school.school_code + '/'
-                os.mkdir(os.path.join('media/', dir_name))
-                os.mkdir(os.path.join('media/' + dir_name, 'Teachers/'))
-                os.mkdir(os.path.join('media/' + dir_name, 'Students/'))
-                os.mkdir(os.path.join('media/' + dir_name, 'Principal/'))
 
                 return redirect('adminhome:homepage')
 
