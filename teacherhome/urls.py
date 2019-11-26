@@ -10,8 +10,10 @@ urlpatterns = [
     url(r'^$', views.TeacherhomepageView.as_view(), name='teacher_homepage'),
     url(r'logout/$', views.LogoutView.as_view(), name='logout'),
     url(r'add_assign/$', views.AddassignFormView.as_view(), name='add_assign'),
-    
+
     url(r'view_assign/$', views.AssignmentView.as_view(), name='view_assign'),
+    path('seeassign/<slug:path>/', views.SeeAssignmentView.as_view(), name='seeassign'),
+
     url(r'sendattendance/$', views.SendAttendanceView.as_view(), name='absentmsg'),
     url(r'attendance/$', views.AttendanceFormView.as_view(), name='attendance'),
 

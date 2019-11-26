@@ -11,6 +11,29 @@ from django.http import Http404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 import datetime
 
+#show pdf
+from django.contrib import messages
+from django.http import FileResponse
+from django.contrib.auth.decorators import login_required
+import os
+from django.conf import settings
+
+#html to pdf 
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+
 def sendSetPasswordMail(request, new_user, first_name, username, current_user, email):
 
     current_site = get_current_site(request)
@@ -90,18 +113,32 @@ class AddassignFormView(View):
             return redirect('teacherhome:view_assign')
         return render(request, self.template_name, {'form': form})  
 
+
+
+class SeeAssignmentView(View):
+    template_name = 'teacherhome/assignment_see.html'
+
+    def get(self, request, path):
+        print(path)
+        filename =str(path).replace("_","/")
+        rel_path = 'media/'+filename+".pdf"
+        print(rel_path)
+        return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
+        # return render(request, self.template_name)
+
 class AssignmentView(View):
     template_name = 'teacherhome/assignment_view.html'
 
     def get(self, request):
         current_user = request.user
         teacher = Teacher.objects.get(user = current_user)  
-        assignment = Assignment.objects.filter(assigned_by=teacher)
+        assignment = Assignment.objects.filter(assigned_by = teacher)
 
         bundle = dict()
+        key = 1
         for a in assignment:
-            a_class = a.class_number
-            bundle[a_class] = a 
+            bundle[key] = a
+            key += 1 
 
         return render(request, self.template_name, {'assignment': bundle})
 
@@ -160,19 +197,34 @@ class AttendanceFormView(View):
 class SendAttendanceView(View):
     template_name = 'teacherhome/sendattendance.html'
     
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         current_user = request.user    
         teacher = Teacher.objects.get(user = current_user) 
-
+        
+        template = get_template('teacherhome/sendattendance.html')
         bundle = dict()
         if teacher.is_class_teacher:    
+            current_user = request.user
+            # teacher = Teacher.objects.get(user = current_user)
+            # students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
+            
+            
+            
             absent_date = datetime.date.today()
             absent = Attendance.objects.filter(school = teacher.school, study = teacher.class_teacher_of, absent_on = absent_date)
             print(absent)
+            key = 1
             for i in absent:
-                bundle[i.roll_no] = i.name
-            return render(request, self.template_name, {'absent_students': bundle})
+                bundle[key] = i.name
+                key += 1 
+            
+            # html = template.render({'bundle': bundle})
+            pdf = render_to_pdf('teacherhome/sendattendance.html', {'bundle': bundle})
+            return HttpResponse(pdf, content_type='application/pdf')
+            
+            # return HttpResponse(html)
 
+            # return render(request, self.template_name, {'bundle': bundle})
         else:
             return redirect('teacherhome:notallowed')
 
