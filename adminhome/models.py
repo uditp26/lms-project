@@ -1,5 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+
+# from django.contrib.auth.models import User
+from applogin.models import User
+
 from phonenumber_field.modelfields import PhoneNumberField
 from .validators import validate_file_extension
 import os
@@ -35,7 +38,7 @@ class School(models.Model):
     pincode = models.PositiveIntegerField(null=True)
 
     def __str__(self):
-        return self.school_name
+        return self.school_code
 
 
 class LocalAdmin(models.Model):
@@ -66,8 +69,8 @@ class Student(models.Model):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
-    def name_to_url(self):
-        return self.first_name + '-' + self.last_name
+    # def name_to_url(self):
+    #     return self.first_name + '-' + self.last_name
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -78,8 +81,8 @@ class Teacher(models.Model):
     email = models.EmailField()
     address = models.TextField(max_length=500)
     joining_date = models.DateField()
-    is_class_teacher = models.BooleanField(default = False)
-    class_teacher_of = models.PositiveIntegerField()
+    is_class_teacher = models.BooleanField(default=False)
+    class_teacher_of = models.IntegerField(null=True)
     subject = models.CharField(max_length=100, null=True)
     resume = models.FileField(upload_to=get_upload_path, validators=[validate_file_extension])
     school = models.ForeignKey(School, on_delete=models.CASCADE)
@@ -88,8 +91,8 @@ class Teacher(models.Model):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
-    def name_to_url(self):
-        return self.first_name + '-' + self.last_name
+    # def name_to_url(self):
+    #     return self.first_name + '-' + self.last_name
 
 class Principal(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -4,11 +4,46 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import logout
 from django.http import Http404
 import os
-from django.contrib.auth.models import User
-from adminhome.models import Teacher, School, Student
-from teacherhome.models import Attendance, Assignment
-from time import gmtime, strftime
 
+# from django.contrib.auth.models import User
+from applogin.models import User
+
+from adminhome.models import Teacher, School, Student, Principal
+from teacherhome.models import Attendance, Assignment
+from principalhome.models import Announcement
+
+from time import gmtime, strftime
+import datetime
+import mimetypes
+
+#show pdf
+from django.contrib import messages
+from django.http import FileResponse
+from django.contrib.auth.decorators import login_required
+import os
+from django.conf import settings
+
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
+
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http:/127.0.0.1:8000/applogin/')]
+
+# def download_file(request):
+#     # fill these variables with real values
+
+#     path = 'media/' + instance.school.school_code
+#     path += '/Assignment/' + str(instance.class_number)+'/' + str(instance.subject)+'/'
+#     fl_path = path
+#     filename = str(assignment.subject) + str(assignment.assign_no) + '.pdf'
+
+#     fl = open(fl_path, 'r’)
+#     mime_type, _ = mimetypes.guess_type(fl_path)
+#     response = HttpResponse(fl, content_type=mime_type)
+#     response['Content-Disposition'] = "attachment; filename=%s" % filename
+#         return response
+
+@method_decorator(decorators, name='dispatch') #if you go back after login it will give error
 class TeacherhomepageView(View):
     template_name = 'studenthome/homepage.html'
     
@@ -20,59 +55,115 @@ class TeacherhomepageView(View):
             student = Student.objects.get(user = current_user) 
 
             name = str(student.first_name)+' '+str(student.last_name)
-            enrollment_no = student.enrollment_no
+            enrolment_no = student.enrolment_no
             roll_no = student.roll_no
             date_of_birth = student.date_of_birth
             email = student.email
             address = student.address
             study = student.study
 
-            bundle = {'name':name, 'enrollment_no': enrollment_no, 'roll_no':roll_no, 'study': study,  'date_of_birth':date_of_birth, 'email': email, 'address': address}
+            bundle = {'Name':name, 'Enrolment no.': enrolment_no, 'Roll no.':roll_no, 'class': study,  'Date of Birth':date_of_birth, 'Email': email, 'Address': address}
             return render(request, self.template_name, {'student':bundle}) 
             
+@method_decorator(decorators, name='dispatch')
+class AttendanceView(View):
+    template_name = 'studenthome/attendance.html'
+
+    def get(self, request):
+        current_user = request.user
+        student = Student.objects.get(user = current_user) 
+        attendance = Attendance.objects.filter(school = student.school, roll_no = student.roll_no, study = student.study)
+        return render(request, self.template_name, {'attendance': attendance})
+
+class SeeAssignmentView(View):
+    template_name = 'studenthome/assignment_see.html'
+
+    def get(self, request, path):
+        print(path)
+        filename =str(path).replace("_","/")
+        rel_path = 'media/'+filename+".pdf"
+        print(rel_path)
+        return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
+
+@method_decorator(decorators, name='dispatch')
+class AssignmentView(View):
+    template_name = 'studenthome/all_assignment.html'
+
+    def get(self, request):
+        current_user = request.user
+        student = Student.objects.get(user = current_user) 
+        current_date = datetime.date.today()
+        assign = Assignment.objects.filter(school = student.school, class_number = student.study, due_date__lte  = current_date).order_by('-due_date')
+        bundle=dict()
+        key = 1
+        for a in assign:
+            bundle[key] = a
+            key += 1 
+        return render(request, self.template_name, {'bundle': bundle})
+
+# For current pending assignments
+@method_decorator(decorators, name='dispatch')
+class CurrentassignmentView(View):
+    template_name = 'studenthome/current_assignment.html'
+
+    def get(self, request):
+        current_user = request.user
+        student = Student.objects.get(user = current_user)
+        current_date = datetime.date.today()
         
+        current_assign = Assignment.objects.filter(school = student.school, class_number = student.study, due_date__gte  = current_date).order_by('due_date')
 
-# class AttendanceView(View):
-#     template_name = 'studenthome/attendance.html'
+        bundle=dict()
+        key = 1
+        for a in current_assign:
+            bundle[key] = a
+            key += 1 
+        return render(request, self.template_name, {'bundle': bundle})
 
-#     def get(self, request):
-#         current_user = request.user
-#         if str(current_user) is 'AnonymousUser':
-#             raise Http404
-#         else:
-#             student = Attendance.objects.get(school_admin=current_user)
-#             if student.school.is_registered is True:
-#                 bundle = {'Student':student}
-#                 return render(request, self.template_name, {'bundle': bundle})
-#             else:
-#                 return redirect('adminhome:registerSchool')
+@method_decorator(decorators, name='dispatch')      
+class LogoutView(View):
+    template_name = 'applogin/login.html'
 
-# class AssignmentView(View):
-#     template_name = 'studenthome/current_assignment.html'
+    def get(self, request):
+        logout(request)
+        return HttpResponseRedirect(reverse('applogin:login'))
 
-#     def get(self, request):
-#         current_user = request.user
-#         if str(current_user) is 'AnonymousUser':
-#             raise Http404
-#         else:
-#             assign = Assignment.objects.get(school_admin=current_user)
-#             if assign.school.is_registered is True:
-#                 bundle = {'Student':assign}
-#                 return render(request, self.template_name, {'bundle': bundle})
-#             else:
-#                 return redirect('adminhome:assignment')
+@method_decorator(decorators, name='dispatch')
+class AnnouncementView(View):
+    template_name = 'studenthome/announcements.html'
 
-# class CurrentassignmentView(View):
-#     template_name = 'studenthome/current_assignment.html'
+    def get(self, request):
+        current_user = request.user
+        if str(current_user) is 'AnonymousUser':
+            raise Http404
+        else:
+            # student = Student.objects.get(user = current_user)
+            current_date = datetime.date.today()
+            announcement_type1 = Announcement.objects.filter(audience="Students", expiry_date__gte = current_date)
+            announcement_type2 = Announcement.objects.filter(audience="All", expiry_date__gte = current_date)
+            
+            announcements = announcement_type1 | announcement_type2
 
-#     def get(self, request):
-#         current_user = request.user
-#         if str(current_user) is 'AnonymousUser':
-#             raise Http404
-#         else:
-#             assign = Assignment.objects.get(school_admin=current_user)
-#             if assign.school.is_registered is True:
-#                 bundle = {'Student':assign}
-#                 return render(request, self.template_name, {'bundle': bundle})
-#             else:
-#                 return redirect('adminhome:assignment')
+            return render(request, self.template_name, {'announcements': announcements})
+
+@method_decorator(decorators, name='dispatch')
+class AnnouncementDetailView(View):
+    template_name = 'studenthome/announcement_detail.html'
+
+    def get(self, request, announcement):
+        current_user = request.user
+        if str(current_user) is 'AnonymousUser':
+            raise Http404
+        else:
+            school = request.user.school
+            principal = Principal.objects.get(school = school)
+           
+            announcement1 = Announcement.objects.get(announcer = principal, audience="Students")
+            announcement2 = Announcement.objects.get(announcer = principal, audience="All")
+            announcement = announcement1 | announcement2
+
+            return render(request, self.template_name, {'announcement': announcement})
+
+def index(request):
+    text = request.GET.get("name")
+    return text

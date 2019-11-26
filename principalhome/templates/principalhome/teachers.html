@@ -1,0 +1,35 @@
+{% extends 'principalhome/base.html' %}
+
+{% block body %}
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Teachers</h1>
+            <h4>List of teachers currently registered</h4>
+    </div>
+</div>
+<div class="container">
+    {% if teachers %}
+        <div class="col-sm-offset-1 col-sm-8">
+            <table class="table table-striped table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th class="text-center text-uppercase">Name</th>
+                        <th class="text-center text-uppercase">Subject</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for teacher in teachers %}
+                        <tr>
+                            <td><a href="{% url 'principalhome:teachers_detail' teacher.name_to_url %}">{{ teacher }}</a></td>
+                            <td>{{ teacher.subject }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No teachers registered yet. Click <a href="{% url 'principalhome:addteacher' %}">here</a> to add teacher.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

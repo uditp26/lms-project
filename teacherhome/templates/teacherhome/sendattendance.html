@@ -4,7 +4,8 @@
 
 <div style="padding-top: 10px; padding-bottom: 10px">
     <div class="container" style=" height: 120px; background-color: lightcyan">
-            <h1> Attendance status</h1>
+            <h1> Attendance status</h1> 
+            
     </div>
 </div>
 
@@ -13,16 +14,20 @@
         <table>
             <thead>
                 <tr>
-                    <th class="text-center text-uppercase">Roll no</th>
+                    <th class="text-center text-uppercase">S-no.</th>
                     <th class="text-center text-uppercase"> Name </th>
+                    <th class="text-center text-uppercase"> Roll Number </th>
+                    <th class="text-center text-uppercase"> Absent Date </th>
                 </tr>
             </thead>
             <div class="col-sm-offset-1 col-sm-8">
                 <tbody>
-                    {% for Rollno, name in bundle.items %}
+                    {% for Key, value in bundle.items %}
                         <tr>
-                            <td>{{ Rollno }}</a></td>
-                            <td>{{ name }}</td>
+                            <td>{{ Key }}</a></td>
+                            <td>{{ value.name }}</td>
+                            <td>{{ value.roll_no }}</td>
+                            <td>{{ value.absent_on }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

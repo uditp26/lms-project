@@ -1,0 +1,38 @@
+{% extends 'principalhome/base.html' %}
+
+{% block body %}
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>Announcements</h1>
+            <h4>View previous announcements or make a new announcement</h4>
+    </div>
+</div>
+<div class="container">
+    {% if announcements %}
+        <div class="col-sm-offset-3 col-sm-8 text-right">
+            <a href="{% url 'principalhome:announce' %}">Make Announcement</a>
+        </div>
+        <div class="col-sm-offset-1 col-sm-8">
+            <table class="table table-striped table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th class="text-center text-uppercase">Subject</th>
+                        <th class="text-center text-uppercase">Audience</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in announcements %}
+                        <tr>
+                            <td><a href="#">{{ a.subject }}</a></td>
+                            <td>{{ a.audience }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No announcements made yet. Click <a href="{% url 'principalhome:announce' %}">here</a> to make an announcement.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

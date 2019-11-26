@@ -21,7 +21,7 @@
             <tbody>
                 {% for student in class_students %}
                     <tr>
-                        <td><a href="{% url 'adminhome:students_detail' clss student.name_to_url %}">{{ student }}</a></td>
+                        <td><a href="{% url 'adminhome:students_detail' clss student.enrolment_no %}">{{ student }}</a></td>
                         <td>{{ student.enrolment_no }}</td>
                     </tr>
                 {% endfor %}
