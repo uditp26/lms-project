@@ -3,7 +3,7 @@ from django.views import generic, View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import logout
 from .models import Assignment, Attendance, Marksdetails
-from .forms import AddassignForm, AttendanceForm
+from .forms import AddassignForm, AttendanceForm, AttendanceviewForm
 
 from adminhome.models import School, Student, Teacher
 from principalhome.models import Announcement
@@ -208,6 +208,83 @@ class AttendanceFormView(View):
 
         return render(request, self.template_name, {'form': form})
 
+#enter roll number and generate pdf for how many days studnet absent
+@method_decorator(decorators, name='dispatch')
+class ShowAttendanceView(View):
+    template_name = 'teacherhome/sendattendance.html'
+    
+    def get(self, request, *args, **kwargs):
+        current_user = request.user    
+        teacher = Teacher.objects.get(user = current_user) 
+        
+        template = get_template('teacherhome/sendattendance.html')
+        bundle = dict()
+        if teacher.is_class_teacher:    
+            current_user = request.user
+            # teacher = Teacher.objects.get(user = current_user)
+            # students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
+            
+            #edit from here.......................
+
+            absent_date = datetime.date.today()
+            absent = Attendance.objects.filter(school = teacher.school, study = teacher.class_teacher_of, absent_on = absent_date)
+            
+            # roll_number = []
+            # for i  in all_absent:
+            #     if i.roll_no not in roll_number:
+            #         roll_number.append(i.roll_no)
+
+            key = 1
+            for i in absent:
+                bundle[key] = i
+                key += 1 
+            
+            # html = template.render({'bundle': bundle})
+            pdf = render_to_pdf('teacherhome/sendattendance.html', {'bundle': bundle})
+            return HttpResponse(pdf, content_type='application/pdf')
+            
+            # return HttpResponse(html)
+
+            # return render(request, self.template_name, {'bundle': bundle})
+        else:
+            return redirect('teacherhome:notallowed')
+                                         
+    def post(self, request):
+        #yet to be completed
+        return render(request, self.template_name)
+
+
+@method_decorator(decorators, name='dispatch')
+class AttendanceviewFormView(View):
+    form_class = AttendanceviewForm
+    template_name = 'teacherhome/studentattendance_form.html'
+
+    # display blank form
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    # process form data
+    def post(self, request):
+        form = self.form_class(request.POST)
+        current_user = request.user
+        teacher = Teacher.objects.get(user = current_user) 
+        bundle = dict()
+        if form.is_valid():
+            roll_no = form.cleaned_data['roll_no']
+            print("STUDENT_ROLL_NO : ",roll_no)
+            absent = Attendance.objects.filter(roll_no = roll_no, school = teacher.school, study = teacher.class_teacher_of)
+            key = 1
+            for i in absent:
+                bundle[key] = i
+                key += 1 
+            
+            pdf = render_to_pdf('teacherhome/sendattendance.html', {'bundle': bundle})
+            return HttpResponse(pdf, content_type='application/pdf')
+
+        return render(request, self.template_name, {'form': form})
+
+
 @method_decorator(decorators, name='dispatch')
 class SendAttendanceView(View):
     template_name = 'teacherhome/sendattendance.html'
@@ -223,8 +300,7 @@ class SendAttendanceView(View):
             # teacher = Teacher.objects.get(user = current_user)
             # students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
             
-            
-            
+
             absent_date = datetime.date.today()
             absent = Attendance.objects.filter(school = teacher.school, study = teacher.class_teacher_of, absent_on = absent_date)
             print(absent)
