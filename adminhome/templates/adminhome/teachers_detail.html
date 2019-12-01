@@ -42,6 +42,12 @@
                     <td>Class Teacher</td>
                     <td>{{ teacher.is_class_teacher }}</td>
                 </tr>
+                {% if teacher.is_class_teacher %}
+                    <tr>
+                        <td>Class Teacher of</td>
+                        <td>{{ teacher.class_teacher_of }}</td>
+                    </tr>
+                {% endif %}
                 <tr>
                     <td>Subject</td>
                     <td>{{ teacher.subject }}</td>

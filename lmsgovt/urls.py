@@ -22,9 +22,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('applogin/', include('applogin.urls')),
+    path('teacherhome/', include('teacherhome.urls')),
     path('adminhome/', include('adminhome.urls')),
     path('principalhome/', include('principalhome.urls')),
-    # url('^', include('django.contrib.auth.urls')),
+    path('studenthome/', include('studenthome.urls')),
 ]
 
 if settings.DEBUG:

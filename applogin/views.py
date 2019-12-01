@@ -1,19 +1,14 @@
 from django.views import View
 from django.shortcuts import render, redirect, HttpResponseRedirect, reverse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, RequestpwdForm, ResetpwdForm, RegistrationForm, PasswordResetForm, SetPasswordForm
+from django.contrib.auth import logout
 from django.views import generic
 from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.mail import send_mail
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.http import HttpResponse
 from django import forms
-from adminhome.models import School
-
-
-from urllib.parse import urlparse, urlunparse
-from django.conf import settings
 
 from django.contrib.auth import (
     REDIRECT_FIELD_NAME, get_user_model, login as auth_login,
@@ -34,6 +29,12 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+
+from urllib.parse import urlparse, urlunparse
+
+from .forms import LoginForm, RequestpwdForm, ResetpwdForm, RegistrationForm, PasswordResetForm, SetPasswordForm
+from adminhome.models import School
+from .models import User
 
 UserModel = get_user_model()
 
@@ -59,23 +60,23 @@ class LoginFormView(View):
             password = form.cleaned_data['password']
 
             # returns user objects if credentials are correct
+
             user = authenticate(username=username, password=password)
 
             if user is not None:
 
-                if user.is_active:
+                if user.is_active and int(radio_btn) == user.user_type:
                     login(request, user)
                     # redirect to respective page
                     if radio_btn == '1':
-                        return redirect('')
+                        return redirect('studenthome:studenthome')
                     elif radio_btn == '2':
-                        return redirect('')
+                        return redirect('teacherhome:teacher_homepage')
                     elif radio_btn == '3':
                         return redirect('principalhome:homepage')
-                    elif radio_btn == '4':
-                        return redirect('')
                     else:
                         return redirect('adminhome:homepage')
+                    # Add else condition
                         # return HttpResponseRedirect(reverse('adminhome:homepage', args=(username,)))
                 else:
                     form.add_error('username', "User does not exist.")
@@ -83,6 +84,13 @@ class LoginFormView(View):
                 form.add_error('username', "User credentials did not match existing records.")
 
         return render(request, self.template_name, {'form': form})
+
+def checkExistingUsers(email):
+    try:
+        User.objects.get(email=email)
+        return True
+    except:
+        return False
 
 class RegistrationFormView(View):
     form_class = RegistrationForm
@@ -103,20 +111,28 @@ class RegistrationFormView(View):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             confpwd = form.cleaned_data['password2']
+            email = form.cleaned_data['email']
 
             if password == confpwd:
-                form_obj.save()
+                flag = checkExistingUsers(email)
+                if flag == False:
+                    form_obj.save()
 
-                user = User.objects.get(username=username)
-                # generate a unique school code as primary key
-                all_schools = School.objects.all()
-                school_code = 'SCH' + '' + str(len(all_schools) + 1)
-                print(school_code)
-                school = School(school_code=school_code, school_admin=user)
+                    user = User.objects.get(username=username)
+
+                    user.user_type = 4
+                    user.save()
+
+                    # generate a unique school code as primary key
+                    all_schools = School.objects.all()
+                    school_code = 'SCH' + '' + str(len(all_schools) + 1)
+                    school = School(school_code=school_code, school_admin=user)
                 
-                school.save()
+                    school.save()
                 
-                return render(request, 'applogin/registrationsuccess.html', {'form': form})
+                    return render(request, 'applogin/registrationsuccess.html', {'form': form})
+                else:
+                    form.add_error('email', 'A user is already registered with this email.')
             else:
                 form.add_error('confirm_password', "Password fields do not match.")
 
@@ -268,82 +284,9 @@ class PasswordResetCompleteView(PasswordContextMixin, TemplateView):
         context['login_url'] = resolve_url(settings.LOGIN_URL)
         return context
 
+class LogoutView(View):
 
-# class RequestpwdFormView(View):
-#     form_class = RequestpwdForm
-#     template_name = 'applogin/requestpwd_form.html'
+    def get(self, request):
+        logout(request)
+        return redirect('applogin:login')
 
-#     # displays a blank form
-#     def get(self, request):
-#         form = self.form_class(None)
-#         return render(request, self.template_name, {'form': form})
-
-#     # process form data
-#     def post(self, request):
-#         form = self.form_class(request.POST)
-
-#         if form.is_valid():
-#             email = form.cleaned_data['email']
-
-#             # otp = getOTP(timestamp)
-#             otp = "1234"
-            
-
-#             # python -m smtpd -n -c DebuggingServer localhost:1025
-
-#             send_mail(
-#                 'App - Request for password change',
-#                 'Here\'s your requested OTP for password change: ' + otp + '. \n This OTP will remain valid for 30 mins.',
-#                 'admin-mail@app.com',
-#                 [email],
-#                 fail_silently=False,
-#             )
-
-#             return redirect('applogin:requestpwdcnf')
-
-#         return render(request, self.template_name, {'form': form})
-
-# class RequestpwdcnfView(View):
-#     template_name = 'applogin/requestpwdcnf.html'
-
-#     def get(self, request):
-#         return render(request, self.template_name)
-
-# class ResetpwdFormView(View):
-#     form_class = ResetpwdForm
-#     template_name = 'applogin/resetpwd_form.html'
-
-#     # displays a blank form
-#     def get(self, request):
-#         form = self.form_class(None)
-#         return render(request, self.template_name, {'form': form})
-
-#     # process form data
-#     def post(self, request):
-#         form = self.form_class(request.POST)
-
-#         if form.is_valid():
-#             # logic for storing the new password
-#             # enforce strong passwrod constraints!
-#             username = form.cleaned_data['username']
-#             password = form.cleaned_data['password']
-#             confpwd = form.cleaned_data['password_confirmation']
-
-#             if password == confpwd:
-#                 user = User.objects.get(username=username)
-#                 if user is not None:
-#                     user.set_password(password)
-#                     user.save()
-#                     return render(request, 'applogin/pwdchangesuccess.html', {'form': form})
-#                 else:
-#                     form.add_error('username', "User credentials did not match existing records.")
-#             else:
-#                 form.add_error('password_confirmation', "Password fields do not match.")
-
-#         return render(request, self.template_name, {'form': form})
-
-# class PwdChangeSuccessView(View):
-#     template_name = 'applogin/pwdchangesuccess.html'
-
-#     def get(self, request):
-#         return render(request, self.template_name)

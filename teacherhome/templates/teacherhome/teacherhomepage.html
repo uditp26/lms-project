@@ -1,0 +1,35 @@
+{% extends 'teacherhome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>{{ teacher.Name }} </h1>
+            <h4>Here's an overview of students in class</h4>
+    </div>
+</div>
+
+<div class="container">
+    <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="col-sm-offset-1 col-sm-8">     
+            <table class="table table-striped table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th class="text-center text-uppercase">Stats</th>
+                        <th class="text-center text-uppercase">Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, value in teacher.items %}
+                        <tr>
+                            <td>{{ key }}</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>  
+        </div>
+    </form>
+</div> 
+{% endblock %}

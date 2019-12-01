@@ -8,6 +8,15 @@ from .forms import AnnouncementForm
 from .models import Announcement
 import datetime
 
+# from django.contrib.auth.mixins import LoginRequiredMixin
+
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
+
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
+
+@method_decorator(decorators, name='dispatch')
 class HomepageView(View):
     template_name = 'principalhome/homepage.html'
 
@@ -23,6 +32,7 @@ class HomepageView(View):
             bundle = {'user':current_user, 'school':str(school), 'students':students, 'teachers':teachers}
             return render(request, self.template_name, {'bundle': bundle})
 
+@method_decorator(decorators, name='dispatch')
 class StudentView(View):
     template_name = 'principalhome/students.html'
 
@@ -42,6 +52,7 @@ class StudentView(View):
 
         return render(request, self.template_name, {'class_dict': bundle})
 
+@method_decorator(decorators, name='dispatch')
 class StudentIndexView(View):
     template_name = 'principalhome/students_index.html'
 
@@ -57,6 +68,7 @@ class StudentIndexView(View):
 
         return render(request, self.template_name, {'class_students': class_students, 'clss':clss})
 
+@method_decorator(decorators, name='dispatch')
 class StudentDetailView(View):
     template_name = 'principalhome/students_detail.html'
 
@@ -71,6 +83,7 @@ class StudentDetailView(View):
         student = Student.objects.get(school=school, study=study, first_name=fname, last_name=lname)
         return render(request, self.template_name, {'student':student})    
 
+@method_decorator(decorators, name='dispatch')
 class TeacherView(View):
     template_name = 'principalhome/teachers.html'
 
@@ -86,6 +99,7 @@ class TeacherView(View):
 
         return render(request, self.template_name)
 
+@method_decorator(decorators, name='dispatch')
 class TeacherDetailView(View):
     template_name = 'principalhome/teachers_detail.html'
 
@@ -99,6 +113,7 @@ class TeacherDetailView(View):
         teacher = Teacher.objects.get(school=school, first_name=fname, last_name=lname)
         return render(request, self.template_name, {'teacher': teacher})
 
+@method_decorator(decorators, name='dispatch')
 class AnnouncementView(View):
     template_name = 'principalhome/announcements.html'
 
@@ -110,6 +125,7 @@ class AnnouncementView(View):
         return render(request, self.template_name, {'announcements': announcements})
 
 
+@method_decorator(decorators, name='dispatch')
 class AnnouncementFormView(View):
     form_class = AnnouncementForm
     template_name = 'principalhome/announcement_form.html'
@@ -145,10 +161,3 @@ class AnnouncementFormView(View):
             return redirect('principalhome:announcements')
 
         return render(request, self.template_name, {'form': form})
-
-class LogoutView(View):
-    template_name = 'applogin/login.html'
-
-    def get(self, request):
-        logout(request)
-        return HttpResponseRedirect(reverse('applogin:login'))

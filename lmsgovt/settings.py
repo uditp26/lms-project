@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os
+import os, socket
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,22 +22,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'nac3u_9r5312_mewx(l=q4h7=8z+@w@*2htxau_bp8d6kn0_c)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # python -m smtpd -n -c DebuggingServer localhost:1025
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
 
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = '****'
-# EMAIL_HOST_PASSWORD = '****'
-# EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = '****'
+# add account credentials here
+
+EMAIL_HOST = socket.gethostbyname('smtp.gmail.com')
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'lmssuperuser5@gmail.com'
+EMAIL_HOST_PASSWORD = 'Admin@lms#'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'lmssuperuser5@gmail.com'
 
 
 PHONENUMBER_DEFAULT_REGION = 'IN'
@@ -49,13 +51,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'applogin.apps.ApploginConfig',
+    'teacherhome.apps.TeacherhomeConfig',
     'adminhome.apps.AdminhomeConfig',
     'principalhome.apps.PrincipalhomeConfig',
-    'django_cleanup',
+    'studenthome.apps.StudenthomeConfig',
+    # 'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -92,10 +95,18 @@ WSGI_APPLICATION = 'lmsgovt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# DATABASE_NAME = os.environ['LMSGOVT_DB']
+# DB_USER = os.environ['PGRES_USER']
+# DB_PWD = os.environ['PGRES_PWD']
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'lms_db',
+	'USER': 'lms_user',
+	'PASSWORD': 'lms@pwd#',
+	'HOST': 'localhost',
+	'PORT': ''
     }
 }
 
@@ -122,6 +133,13 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+# User not to be referred directly but as stated below.
+
+# from django.conf import settings
+# settings.AUTH_USER_MODEL
+
+AUTH_USER_MODEL = 'applogin.User'
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -140,6 +158,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+
+LOGOUT_REDIRECT_URL = 'http://192.168.2.225:1207/lms/applogin/'
