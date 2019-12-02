@@ -22,24 +22,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'nac3u_9r5312_mewx(l=q4h7=8z+@w@*2htxau_bp8d6kn0_c)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 # python -m smtpd -n -c DebuggingServer localhost:1025
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'localhost'
-# EMAIL_PORT = 1025
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
 
 # add account credentials here
 
-EMAIL_HOST = socket.gethostbyname('smtp.gmail.com')
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'lmssuperuser5@gmail.com'
-EMAIL_HOST_PASSWORD = 'Admin@lms#'
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'lmssuperuser5@gmail.com'
+# EMAIL_HOST = socket.gethostbyname('smtp.gmail.com')
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'lmssuperuser5@gmail.com'
+# EMAIL_HOST_PASSWORD = 'Admin@lms#'
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = 'lmssuperuser5@gmail.com'
 
 
 PHONENUMBER_DEFAULT_REGION = 'IN'
@@ -163,4 +163,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
-LOGOUT_REDIRECT_URL = 'http://192.168.2.225:1207/lms/applogin/'
+LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/applogin/'

@@ -18,5 +18,6 @@ urlpatterns = [
     path('teachers/<slug:username>/', views.TeacherDetailView.as_view(), name='teachers_detail'),
     url(r'principal/$', views.PrincipalView.as_view(), name='principal'),
     url(r'principal/addPrincipal/$', views.AddprincipalFormView.as_view(), name='addPrincipal'),
-
+    url(r'circulars/$', views.FeeCircularsView.as_view(), name='feecirculars'),
+    url(r'circulars/addcircular/$', views.AddFeeCircularView.as_view(), name='addFeeCircular'),
 ]

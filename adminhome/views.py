@@ -1,7 +1,7 @@
 from django.shortcuts import render, reverse, redirect
 from django.views import generic, View
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import LocalAdmin, Student, Teacher, Principal, Parent, School
+from .models import LocalAdmin, Student, Teacher, Principal, Parent, School, Feecircular
 from .forms import AddstudentForm, AddteacherForm, RegisterschoolForm, AddprincipalForm
 
 # from django.contrib.auth.models import User
@@ -20,6 +20,10 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 
+from easy_pdf.rendering import render_to_pdf
+from django.core.files.base import ContentFile
+import datetime
+
 # from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.template import loader
@@ -29,7 +33,7 @@ from random import *
 min_char = 8
 max_char = 12
 
-decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://127.0.0.1:8000/applogin/')]
 
 def createNewUser(email, first_name, last_name, u_type):
     username = email.split('@')[0]
@@ -432,3 +436,49 @@ class AddprincipalFormView(View):
                     form.add_error('subject', "Subject field can't be empty.")
 
         return render(request, self.template_name, {'form': form})
+
+@method_decorator(decorators, name='dispatch')
+class FeeCircularsView(View):
+    template_name = 'adminhome/feecirculars.html'
+
+    def get(self, request):
+        current_user = request.user
+        fc_list = Feecircular.objects.filter(school_admin=current_user)
+        return render(request, self.template_name, {'bundle': fc_list})
+
+@method_decorator(decorators, name='dispatch')
+class AddFeeCircularView(View):
+    template_name = 'adminhome/addfeecircular_form.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        current_user = request.user
+        tfee1 = request.POST.dict()['tfee1']
+        tfee2 = request.POST.dict()['tfee2']
+        tfee3 = request.POST.dict()['tfee3']
+        dfee1 = request.POST.dict()['dfee1']
+        dfee2 = request.POST.dict()['dfee2']
+        dfee3 = request.POST.dict()['dfee3']
+        ddate1 = request.POST.dict()['ddate1']
+        ddate2 = request.POST.dict()['ddate2']
+        ddate3 = request.POST.dict()['ddate3']
+        notes = request.POST.dict()['notes']
+
+        school = School.objects.get(school_admin=current_user)
+        school_name = school.school_name
+
+        ref_no = school.school_code + "/FCIR/#" + str(len(Feecircular.objects.all()) + 1) 
+        date = datetime.date.today().strftime('%d-%m-%Y')
+        bundle = {'school_name':school_name, 'ref_no':ref_no, 'date':date, 'tfee1':tfee1, 'tfee2':tfee2, 'tfee3':tfee3, 'dfee1':dfee1, 'dfee2':dfee2, 'dfee3':dfee3, 'ddate1':ddate1, 'ddate2':ddate2, 'ddate3':ddate3, 'notes':notes}
+
+        fileData = render_to_pdf('adminhome/feecircular-template.html', {'bundle':bundle})
+
+        file_data = ContentFile(fileData)
+        file_name = "fcir_" + str(len(Feecircular.objects.all()) + 1) + "_" + str(date) + ".pdf"
+
+        fee_obj = Feecircular(ref_no=ref_no, school_admin=current_user, date_of_issue=datetime.date.today().strftime('%Y-%m-%d'), file_name=file_name)
+        fee_obj.save()
+        fee_obj.pdf_ver.save(file_name, file_data)
+        return HttpResponseRedirect(reverse('adminhome:feecirculars'))
