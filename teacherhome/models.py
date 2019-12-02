@@ -4,19 +4,34 @@ from adminhome.validators import validate_file_extension
 from adminhome.models import School, Teacher, Student
 import os
 
+#dont delete
+# def get_upload_path(instance, filename):
+#     path = 'media/' + instance.school.school_code
+#     # name =  instance.first_name + '_' + instance.last_name + '/'
+#     rel_dir = ''
+    
+#     if type(instance) == Assignment:
+#         path += '/Assignment/' + str(instance.class_number)+'/' + str(instance.subject)+'/'  #+ str(instance.assign_number)+'/'
+#         rel_dir = '/Assignment/' + str(instance.class_number)+'/' + str(instance.subject)+'/' # + str(instance.assign_number)+'/'
+
+#     os.makedirs(os.path.join(path), exist_ok=True)
+#     rel_path = instance.school.school_code + rel_dir
+
+#     format1 = str(instance.subject) + str(instance.assign_number) + '.pdf'
+#     return os.path.join(rel_path, format1)
+
 def get_upload_path(instance, filename):
-    path = 'media/' + instance.school.school_code
-    # name =  instance.first_name + '_' + instance.last_name + '/'
+    path = 'media/' 
+    name = str(instance.school.school_code)+"_"
     rel_dir = ''
     
     if type(instance) == Assignment:
-        path += '/Assignment/' + str(instance.class_number)+'/' + str(instance.subject)+'/'  #+ str(instance.assign_number)+'/'
-        rel_dir = '/Assignment/' + str(instance.class_number)+'/' + str(instance.subject)+'/' # + str(instance.assign_number)+'/'
-
-    os.makedirs(os.path.join(path), exist_ok=True)
-    rel_path = instance.school.school_code + rel_dir
-
-    format1 = str(instance.subject) + str(instance.assign_number) + '.pdf'
+        path += '/Assignment/'
+        rel_dir = 'Assignment/'
+        name += str(instance.class_number)+'/' + str(instance.subject)+'/'
+    rel_path = rel_dir
+    format1 = str(name) + str(instance.subject) + str(instance.assign_number) + '.pdf'
+    format1 = format1.replace("/",'_')  
     return os.path.join(rel_path, format1)
 
 class Assignment(models.Model):
@@ -30,9 +45,10 @@ class Assignment(models.Model):
     assignment_file = models.FileField(upload_to=get_upload_path, validators=[validate_file_extension])
     
     def __str__(self):
+        # assignment = str(self.assignment_file).replace("/","_").split(".")[0]
+        # return str(assignment.replace(" ","_"))
         return str(self.assignment_file).replace("/","_").split(".")[0]
 
-                              
 class Attendance(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     roll_no = models.CharField(max_length=20)

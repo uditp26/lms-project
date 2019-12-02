@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.auth',
+     'wkhtmltopdf',
     # 'rest_framework',
     'applogin.apps.ApploginConfig',
     'teacherhome.apps.TeacherhomeConfig',

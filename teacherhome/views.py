@@ -131,12 +131,9 @@ class AddassignFormView(View):
 
 class SeeAssignmentView(View):
     template_name = 'teacherhome/assignment_see.html'
-
     def get(self, request, path):
-        print(path)
-        filename =str(path).replace("_","/")
-        rel_path = 'media/'+filename+".pdf"
-        print(rel_path)
+        filename =str(path).replace("Assignment_",'')
+        rel_path = 'media/Assignment/'+filename+".pdf"
         return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
         # return render(request, self.template_name)
 
@@ -153,7 +150,8 @@ class AssignmentView(View):
         for a in assignment:
             bundle[key] = a
             key += 1 
-
+            print("Assignment_file : ",a.assignment_file)
+        
         return render(request, self.template_name, {'assignment': bundle})
 
 @method_decorator(decorators, name='dispatch')
@@ -273,7 +271,11 @@ class AttendanceviewFormView(View):
         if form.is_valid():
             roll_no = form.cleaned_data['roll_no']
             print("STUDENT_ROLL_NO : ",roll_no)
-            absent = Attendance.objects.filter(roll_no = roll_no, school = teacher.school, study = teacher.class_teacher_of)
+            try:
+                absent = Attendance.objects.filter(roll_no = roll_no, school = teacher.school, study = teacher.class_teacher_of)
+            except:
+                form.add_error('roll_no', "Roll number does not exist in your class.")
+
             key = 1
             for i in absent:
                 bundle[key] = i
