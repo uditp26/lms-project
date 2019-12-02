@@ -127,13 +127,16 @@ class AddassignFormView(View):
             return redirect('teacherhome:view_assign')
         return render(request, self.template_name, {'form': form})  
 
-
-
 class SeeAssignmentView(View):
     template_name = 'teacherhome/assignment_see.html'
     def get(self, request, path):
-        filename =str(path).replace("Assignment_",'')
-        rel_path = 'media/Assignment/'+filename+".pdf"
+        filename =str(path).split('_____')
+        filename1 = filename[0].split('_')
+        filename1 = filename1[-3:]
+        
+        filename2 = filename1[0]+'_'+filename1[1]+'_'+filename1[2]
+        schoolcode = str(filename[0]).split('_')[0]
+        rel_path = 'media/'+str(schoolcode)+'/Teachers/'+str(filename[1])+"/Assignment/"+str(filename2)+".pdf"
         return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
         # return render(request, self.template_name)
 
@@ -150,7 +153,6 @@ class AssignmentView(View):
         for a in assignment:
             bundle[key] = a
             key += 1 
-            print("Assignment_file : ",a.assignment_file)
         
         return render(request, self.template_name, {'assignment': bundle})
 
@@ -270,7 +272,6 @@ class AttendanceviewFormView(View):
         bundle = dict()
         if form.is_valid():
             roll_no = form.cleaned_data['roll_no']
-            print("STUDENT_ROLL_NO : ",roll_no)
             try:
                 absent = Attendance.objects.filter(roll_no = roll_no, school = teacher.school, study = teacher.class_teacher_of)
             except:
@@ -305,7 +306,7 @@ class SendAttendanceView(View):
 
             absent_date = datetime.date.today()
             absent = Attendance.objects.filter(school = teacher.school, study = teacher.class_teacher_of, absent_on = absent_date)
-            print(absent)
+
             key = 1
             for i in absent:
                 bundle[key] = i

@@ -4,7 +4,7 @@ from adminhome.validators import validate_file_extension
 from adminhome.models import School, Teacher, Student
 import os
 
-#dont delete
+##dont delete
 # def get_upload_path(instance, filename):
 #     path = 'media/' + instance.school.school_code
 #     # name =  instance.first_name + '_' + instance.last_name + '/'
@@ -21,18 +21,20 @@ import os
 #     return os.path.join(rel_path, format1)
 
 def get_upload_path(instance, filename):
-    path = 'media/' 
+    path = 'media/' + instance.school.school_code
     name = str(instance.school.school_code)+"_"
     rel_dir = ''
     
     if type(instance) == Assignment:
-        path += '/Assignment/'
-        rel_dir = 'Assignment/'
+        path += '/Teachers/'+ str(instance.assigned_by).replace(' ','_') +'/Assignment/'
+        rel_dir = '/Teachers/'+ str(instance.assigned_by).replace(' ','_') +'/Assignment/'
         name += str(instance.class_number)+'/' + str(instance.subject)+'/'
-    rel_path = rel_dir
+    rel_path = instance.school.school_code + rel_dir
     format1 = str(name) + str(instance.subject) + str(instance.assign_number) + '.pdf'
-    format1 = format1.replace("/",'_')  
-    return os.path.join(rel_path, format1)
+    format1 = format1.replace("/",'_')
+    format1 = format1.split('_')
+    format2 = str(format1[1])+'_'+str(format1[2])+'_'+str(format1[3])
+    return os.path.join(rel_path, format2)
 
 class Assignment(models.Model):
     class_number = models.IntegerField()
@@ -47,7 +49,7 @@ class Assignment(models.Model):
     def __str__(self):
         # assignment = str(self.assignment_file).replace("/","_").split(".")[0]
         # return str(assignment.replace(" ","_"))
-        return str(self.assignment_file).replace("/","_").split(".")[0]
+        return str(str(self.assignment_file).replace("/","_").split(".")[0]+'_____'+str(self.assigned_by).replace(' ','_'))
 
 class Attendance(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)
