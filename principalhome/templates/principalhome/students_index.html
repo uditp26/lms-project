@@ -1,0 +1,34 @@
+{% extends 'principalhome/base.html' %}
+
+{% block body %}
+
+<div style="padding-top: 10px; padding-bottom: 10px">
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+            <h1>{{ clss }}</h1>
+            <h4>.....</h4>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-sm-offset-1 col-sm-8">
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th class="text-center text-uppercase">Name</th>
+                    <th class="text-center text-uppercase"> Enrolment No. </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in class_students %}
+                    <tr>
+                        <td><a href="{% url 'principalhome:students_detail' clss student.name_to_url %}">{{ student }}</a></td>
+                        <td>{{ student.enrolment_no }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

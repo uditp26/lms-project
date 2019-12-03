@@ -23,8 +23,29 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+
 MANIFEST
 
+*/migrations/*
+*/__pycache__/*
+
+adminhome/__pycache__/*
+adminhome/migrations/*
+
+applogin/__pycache__/*
+applogin/migrations/*
+
+principalhome/__pycache__/*
+principalhome/migrations/*
+
+studenthome/__pycache__/*
+studenthome/migrations/*
+
+teacherhome/__pycache__/*
+teacherhome/migrations/*
+
+lmsgovt/__pycache__/*
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.

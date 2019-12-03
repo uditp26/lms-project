@@ -7,8 +7,10 @@
 	<!-- For Date Picker -->
 	<script>
 		$(function () {
+			var today = new Date();
 			$('.datetime-input').datetimepicker({
-				format:'YYYY-MM-DD'
+				format:'YYYY-MM-DD',
+				maxDate: today
 			});
 		});
 	</script>

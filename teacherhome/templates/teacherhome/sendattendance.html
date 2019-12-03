@@ -1,34 +1,38 @@
-{% extends 'teacherhome/base.html' %}
+{% comment %} {% extends 'teacherhome/base.html' %} {% endcomment %}
 
 {% block body %}
 
 <div style="padding-top: 10px; padding-bottom: 10px">
     <div class="container" style=" height: 120px; background-color: lightcyan">
-            <h1>Send Attendance</h1>
-            <h4>Inform parents about students's attendance.</h4>
+            <h1> Attendance status</h1> 
+            
     </div>
 </div>
+
 <div class="container">
     <div class="col-sm-offset-1 col-sm-8">
-        <table class="table table-striped table-bordered text-center">
+        <table>
             <thead>
                 <tr>
-                    <th class="text-center text-uppercase">Roll no</th>
+                    <th class="text-center text-uppercase">S-no.</th>
                     <th class="text-center text-uppercase"> Name </th>
+                    <th class="text-center text-uppercase"> Roll Number </th>
+                    <th class="text-center text-uppercase"> Absent Date </th>
                 </tr>
             </thead>
-            <tbody>
-                {% for Rollno, name in absent_students.items %}
-                    <tr>
-                        <td>{{ Rollno }}</a></td>
-                        <td>{{ name }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+            <div class="col-sm-offset-1 col-sm-8">
+                <tbody>
+                    {% for Key, value in bundle.items %}
+                        <tr>
+                            <td>{{ Key }}</a></td>
+                            <td>{{ value.name }}</td>
+                            <td>{{ value.roll_no }}</td>
+                            <td>{{ value.absent_on }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </div>
         </table>
-        <div class="col-sm-offset-10 col-sm-1">
-            <button type="submit" class="btn btn-success">Send</button>
-        </div>
     </div>
 </div>
 

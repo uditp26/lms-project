@@ -17,21 +17,26 @@
         <table class="table table-striped table-bordered text-center">
             <thead>
                 <tr>
+                    <th class="text-center text-uppercase">Sno.</th>
                     <th class="text-center text-uppercase">Class</th>
                     <th class="text-center text-uppercase">Subject</th>
                     <th class="text-center text-uppercase">Due Date</th>
+                    <th class="text-center text-uppercase">Assignment</th>
                 </tr>
             </thead>
             <tbody>
                 
-                {% for a_class, a_value in assignment.items %}
+                {% for key, a_value in assignment.items %}
                     <tr>
-                        <td>{{ a_class }}</a></td>
+                        <td>{{ key }}</a></td>
+                        <td>{{ a_value.class_number }}</a></td>
                         <td>{{ a_value.subject }}</td>
                         <td>{{ a_value.due_date }}</td>
+                        <td><a href="{% url 'teacherhome:seeassign'  a_value %}">View Assignment</a></td>
+                        </object></td>
+                        
                     </tr>
                 {% endfor %}
-                
             </tbody>
         </table>
     </div>

@@ -23,7 +23,7 @@
                 <tbody>
                     {% for teacher in teachers %}
                         <tr>
-                            <td><a href="{% url 'adminhome:teachers_detail' teacher.name_to_url %}">{{ teacher }}</a></td>
+                            <td><a href="{% url 'adminhome:teachers_detail' teacher.user.username %}">{{ teacher }}</a></td>
                             <td>{{ teacher.subject }}</td>
                         </tr>
                     {% endfor %}
