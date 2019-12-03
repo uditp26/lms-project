@@ -121,7 +121,7 @@ class AddassignFormView(View):
 
             assignment_no = len(Assignment.objects.filter(assigned_by=teacher, subject=subject)) + 1
             addassign.assign_number = assignment_no
-            addassign.assigned_by = teacher.first_name+ ' '+ teacher.last_name
+            addassign.assigned_by = teacher
             addassign.school = teacher.school
             addassign.save() 
             return redirect('teacherhome:view_assign')
@@ -130,15 +130,17 @@ class AddassignFormView(View):
 class SeeAssignmentView(View):
     template_name = 'teacherhome/assignment_see.html'
     def get(self, request, path):
-        filename =str(path).split('_____')
-        filename1 = filename[0].split('_')
-        filename1 = filename1[-3:]
-        
-        filename2 = filename1[0]+'_'+filename1[1]+'_'+filename1[2]
-        schoolcode = str(filename[0]).split('_')[0]
-        rel_path = 'media/'+str(schoolcode)+'/Teachers/'+str(filename[1])+"/Assignment/"+str(filename2)+".pdf"
+        filename =str(path).split('_')
+        filename1 = []
+        for i in range(3,len(filename)):
+            filename1.append(filename[i])
+        filename2 = ''
+        for i in range(len(filename1)):
+            filename2 += filename1[i]
+            if i+1 < len(filename1):
+                filename2 += '_'
+        rel_path = 'media/'+str(filename[0])+'/'+str(filename[1])+"_"+str(filename[2])+'/'+str(filename2)+".pdf"
         return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
-        # return render(request, self.template_name)
 
 class AssignmentView(View):
     template_name = 'teacherhome/assignment_view.html'
