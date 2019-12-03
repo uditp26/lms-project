@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os
+import os, socket
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,11 +26,20 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# CUSTOM_USER_MODEL = 'accounts.CustomUser'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# python -m smtpd -n -c DebuggingServer localhost:1025
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
+
+# add account credentials here
+
+# EMAIL_HOST = socket.gethostbyname('smtp.gmail.com')
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'lmssuperuser5@gmail.com'
+# EMAIL_HOST_PASSWORD = 'Admin@lms#'
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = 'lmssuperuser5@gmail.com'
 
 PHONENUMBER_DEFAULT_REGION = 'IN'
 
@@ -43,14 +52,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.auth',
-     'wkhtmltopdf',
-    # 'rest_framework',
     'applogin.apps.ApploginConfig',
     'teacherhome.apps.TeacherhomeConfig',
     'adminhome.apps.AdminhomeConfig',
     'principalhome.apps.PrincipalhomeConfig',
     'studenthome.apps.StudenthomeConfig',
-    'django_cleanup',
+    # 'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -87,10 +94,18 @@ WSGI_APPLICATION = 'lmsgovt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# DATABASE_NAME = os.environ['LMSGOVT_DB']
+# DB_USER = os.environ['PGRES_USER']
+# DB_PWD = os.environ['PGRES_PWD']
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'lms_db',
+	'USER': 'lms_user',
+	'PASSWORD': 'lms@pwd#',
+	'HOST': 'localhost',
+	'PORT': ''
     }
 }
 
@@ -142,8 +157,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
 LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/applogin/'

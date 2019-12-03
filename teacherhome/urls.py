@@ -4,9 +4,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 
-#PDFTemplateView
-from wkhtmltopdf.views import PDFTemplateView
-
 app_name = 'teacherhome'
 
 urlpatterns = [
