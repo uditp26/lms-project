@@ -41,7 +41,6 @@ EMAIL_HOST_PASSWORD = 'Admin@lms#'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'lmssuperuser5@gmail.com'
 
-
 PHONENUMBER_DEFAULT_REGION = 'IN'
 
 # Application definition

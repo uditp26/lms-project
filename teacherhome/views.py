@@ -3,10 +3,17 @@ from django.views import generic, View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import logout
 from .models import Assignment, Attendance, Marksdetails
-from .forms import AddassignForm, AttendanceForm
+from .forms import AddassignForm, AttendanceForm, AttendanceviewForm
 
 from adminhome.models import School, Student, Teacher
 from principalhome.models import Announcement
+
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.template import loader
 
 from collections import defaultdict
 from django.urls import reverse_lazy
@@ -17,7 +24,65 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 
+#show pdf
+from django.contrib import messages
+from django.http import FileResponse
+import os
+from django.conf import settings
+
+#html to pdf 
+# pip install --pre xhtml2pdf
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
 decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
+
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+
+def sendSetPasswordMail(request, new_user, first_name, username, current_user, email):
+
+    current_site = get_current_site(request)
+    domain = current_site.domain
+    uid = urlsafe_base64_encode(force_bytes(new_user.pk))
+    token = default_token_generator.make_token(new_user)
+    protocol = 'http'
+
+    if type(token) != str:
+        token = token[0]
+
+    html_message = loader.render_to_string(
+    'adminhome/user_registration_email.html',
+    {
+        'name': first_name,
+        'username': username,
+        'protocol': protocol,
+        'domain':  domain,
+        'uid': uid,
+        'token': token
+    })
+
+    # print(html_message)
+
+    # re-configure connection/email backend dynamically!
+
+    send_mail(
+        'Account Registration',
+        '',
+        str(current_user),
+        [email],
+        fail_silently=False,
+        html_message=html_message
+    )
                                          
 @method_decorator(decorators, name='dispatch')
 class TeacherhomepageView(View):
@@ -62,12 +127,27 @@ class AddassignFormView(View):
 
             assignment_no = len(Assignment.objects.filter(assigned_by=teacher, subject=subject)) + 1
             addassign.assign_number = assignment_no
-            addassign.assigned_by = teacher.first_name+ ' '+ teacher.last_name
+            addassign.assigned_by = teacher
             addassign.school = teacher.school
             addassign.save() 
             return redirect('teacherhome:view_assign')
         return render(request, self.template_name, {'form': form})  
 
+@method_decorator(decorators, name='dispatch')
+class SeeAssignmentView(View):
+    template_name = 'teacherhome/assignment_see.html'
+    def get(self, request, path):
+        filename =str(path).split('_')
+        filename1 = []
+        for i in range(3,len(filename)):
+            filename1.append(filename[i])
+        filename2 = ''
+        for i in range(len(filename1)):
+            filename2 += filename1[i]
+            if i+1 < len(filename1):
+                filename2 += '_'
+        rel_path = 'media/'+str(filename[0])+'/'+str(filename[1])+"_"+str(filename[2])+'/'+str(filename2)+".pdf"
+        return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
 
 @method_decorator(decorators, name='dispatch')
 class AssignmentView(View):
@@ -76,8 +156,15 @@ class AssignmentView(View):
     def get(self, request):
         current_user = request.user
         teacher = Teacher.objects.get(user = current_user)  
-        assignment = Assignment.objects.filter(assigned_by=teacher).order_by('-due_date')
-        return render(request, self.template_name, {'assignment': assignment})
+        assignment = Assignment.objects.filter(assigned_by = teacher)
+
+        bundle = dict()
+        key = 1
+        for a in assignment:
+            bundle[key] = a
+            key += 1 
+        
+        return render(request, self.template_name, {'assignment': bundle})
 
 @method_decorator(decorators, name='dispatch')
 class AttendanceFormView(View):
@@ -131,22 +218,117 @@ class AttendanceFormView(View):
 
         return render(request, self.template_name, {'form': form})
 
+#enter roll number and generate pdf for how many days studnet absent
+@method_decorator(decorators, name='dispatch')
+class ShowAttendanceView(View):
+    template_name = 'teacherhome/sendattendance.html'
+    
+    def get(self, request, *args, **kwargs):
+        current_user = request.user    
+        teacher = Teacher.objects.get(user = current_user) 
+        
+        template = get_template('teacherhome/sendattendance.html')
+        bundle = dict()
+        if teacher.is_class_teacher:    
+            current_user = request.user
+            # teacher = Teacher.objects.get(user = current_user)
+            # students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
+            
+            #edit from here.......................
+
+            absent_date = datetime.date.today()
+            absent = Attendance.objects.filter(school = teacher.school, study = teacher.class_teacher_of, absent_on = absent_date)
+            
+            # roll_number = []
+            # for i  in all_absent:
+            #     if i.roll_no not in roll_number:
+            #         roll_number.append(i.roll_no)
+
+            key = 1
+            for i in absent:
+                bundle[key] = i
+                key += 1 
+            
+            # html = template.render({'bundle': bundle})
+            pdf = render_to_pdf('teacherhome/sendattendance.html', {'bundle': bundle})
+            return HttpResponse(pdf, content_type='application/pdf')
+            
+            # return HttpResponse(html)
+
+            # return render(request, self.template_name, {'bundle': bundle})
+        else:
+            return redirect('teacherhome:notallowed')
+                                         
+    def post(self, request):
+        #yet to be completed
+        return render(request, self.template_name)
+
+
+@method_decorator(decorators, name='dispatch')
+class AttendanceviewFormView(View):
+    form_class = AttendanceviewForm
+    template_name = 'teacherhome/studentattendance_form.html'
+
+    # display blank form
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    # process form data
+    def post(self, request):
+        form = self.form_class(request.POST)
+        current_user = request.user
+        teacher = Teacher.objects.get(user = current_user) 
+        bundle = dict()
+        if form.is_valid():
+            roll_no = form.cleaned_data['roll_no']
+            try:
+                absent = Attendance.objects.filter(roll_no = roll_no, school = teacher.school, study = teacher.class_teacher_of)
+            except:
+                form.add_error('roll_no', "Roll number does not exist in your class.")
+
+            key = 1
+            for i in absent:
+                bundle[key] = i
+                key += 1 
+            
+            pdf = render_to_pdf('teacherhome/sendattendance.html', {'bundle': bundle})
+            return HttpResponse(pdf, content_type='application/pdf')
+
+        return render(request, self.template_name, {'form': form})
+
+
 @method_decorator(decorators, name='dispatch')
 class SendAttendanceView(View):
     template_name = 'teacherhome/sendattendance.html'
-    def get(self, request):
+    
+    def get(self, request, *args, **kwargs):
         current_user = request.user    
         teacher = Teacher.objects.get(user = current_user) 
-
+        
+        template = get_template('teacherhome/sendattendance.html')
         bundle = dict()
         if teacher.is_class_teacher:    
+            current_user = request.user
+            # teacher = Teacher.objects.get(user = current_user)
+            # students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
+            
+
             absent_date = datetime.date.today()
             absent = Attendance.objects.filter(school = teacher.school, study = teacher.class_teacher_of, absent_on = absent_date)
-            print(absent)
-            for i in absent:
-                bundle[i.roll_no] = i.name
-            return render(request, self.template_name, {'absent_students': bundle})
 
+            key = 1
+            for i in absent:
+                bundle[key] = i
+                key += 1 
+            
+            # html = template.render({'bundle': bundle})
+            pdf = render_to_pdf('teacherhome/sendattendance.html', {'bundle': bundle})
+            return HttpResponse(pdf, content_type='application/pdf')
+            
+            # return HttpResponse(html)
+
+            # return render(request, self.template_name, {'bundle': bundle})
         else:
             return redirect('teacherhome:notallowed')
                                          
@@ -277,12 +459,15 @@ class SendResultView(View):
     def get(self, request):
         return render(request, self.template_name)
 
+@method_decorator(decorators, name='dispatch')
 class NotificationView(View):
     template_name = 'teacherhome/notification.html'
     # context = {'admin': LocalAdmin.objects.get(pk=1)} # use filter()
     def get(self, request):
         current_user = request.user
         return render(request, self.template_name, {'current_user': current_user})
+
+@method_decorator(decorators, name='dispatch')
 class ScheduleView(View):
     template_name = 'teacherhome/schedule.html'
     # context = {'admin': LocalAdmin.objects.get(pk=1)} # use filter()
@@ -297,6 +482,7 @@ class LogoutView(View):
         logout(request)
         return HttpResponseRedirect(reverse('applogin:login'))
 
+@method_decorator(decorators, name='dispatch')
 class TeacherUpdateView(UpdateView):
     model = Teacher
     fields = ['first_name', 'last_name', 'date_of_birth', 'joining_date', 'email', 'phone', 'is_class_teacher', 'subject', 'resume']

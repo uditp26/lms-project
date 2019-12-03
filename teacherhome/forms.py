@@ -3,8 +3,9 @@ from applogin.models import User
 
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
-from adminhome.models import Teacher 
+from adminhome.models import Teacher, Student
 from .models import Assignment, Attendance, Marksdetails
+
 from django.forms import formset_factory
 
 class AddassignForm(forms.ModelForm):
@@ -43,8 +44,12 @@ class AttendanceForm(forms.ModelForm):
         for name, value in self.cleaned_data.items():
             yield (self.fields[name].label, value)
 
+class AttendanceviewForm(forms.Form):
+	roll_no = forms.IntegerField(min_value=0)
 
-
+	class Meta:
+		# model = Student
+		fields = ['roll_no']
 
 # class MarksDetailsForm(forms.ModelForm):
 

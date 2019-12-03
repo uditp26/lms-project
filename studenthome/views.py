@@ -16,6 +16,13 @@ from time import gmtime, strftime
 import datetime
 import mimetypes
 
+#show pdf
+from django.contrib import messages
+from django.http import FileResponse
+from django.contrib.auth.decorators import login_required
+import os
+from django.conf import settings
+
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
@@ -68,6 +75,16 @@ class AttendanceView(View):
         attendance = Attendance.objects.filter(school = student.school, roll_no = student.roll_no, study = student.study)
         return render(request, self.template_name, {'attendance': attendance})
 
+class SeeAssignmentView(View):
+    template_name = 'studenthome/assignment_see.html'
+
+    def get(self, request, path):
+        print(path)
+        filename =str(path).replace("_","/")
+        rel_path = 'media/'+filename+".pdf"
+        print(rel_path)
+        return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
+
 @method_decorator(decorators, name='dispatch')
 class AssignmentView(View):
     template_name = 'studenthome/all_assignment.html'
@@ -78,8 +95,10 @@ class AssignmentView(View):
         current_date = datetime.date.today()
         assign = Assignment.objects.filter(school = student.school, class_number = student.study, due_date__lte  = current_date).order_by('-due_date')
         bundle=dict()
-        for i in assign:
-            bundle[i.due_date] = i.subject
+        key = 1
+        for a in assign:
+            bundle[key] = a
+            key += 1 
         return render(request, self.template_name, {'bundle': bundle})
 
 # For current pending assignments
@@ -94,7 +113,12 @@ class CurrentassignmentView(View):
         
         current_assign = Assignment.objects.filter(school = student.school, class_number = student.study, due_date__gte  = current_date).order_by('due_date')
 
-        return render(request, self.template_name, {'current_assign': current_assign})
+        bundle=dict()
+        key = 1
+        for a in current_assign:
+            bundle[key] = a
+            key += 1 
+        return render(request, self.template_name, {'bundle': bundle})
 
 @method_decorator(decorators, name='dispatch')      
 class LogoutView(View):

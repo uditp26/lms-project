@@ -1,0 +1,27 @@
+{% extends 'teacherhome/base.html' %}
+{% block title %}View attendance{% endblock %}
+
+{% block body %}
+
+<div>
+    <div class="container" style=" height: 120px; background-color: lightcyan">
+        <h1 style="text-indent: 2cm">View attendance corresponding to a student</font></h1>
+        <h4 style="text-indent: 2cm">Enter the roll-number of a student to check the absent date</font></h4>
+    </div>
+</div>
+
+<div class="container-fluid">
+	<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		<div class="container-fluid" style="padding: 2cm">
+			{% include 'teacherhome/form-template2.html' %}
+			<div class="form-group">
+				<div class="col-xs-offset-3 col-xs-1">
+					<button type="submit" class="btn btn-success">View</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+{% endblock %}

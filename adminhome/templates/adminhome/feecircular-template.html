@@ -1,0 +1,57 @@
+
+
+{% block extra_style %}
+    <style type="text/css">
+        body {
+            font-family: "Helvetica", "sans-serif";
+            color: #333333;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div id="content">
+        <div class="main">
+            <h1 style="align-content: center;">{{ bundle.school_name }}</h1>
+            <h2 style="align-content: center;">Fee Circular</h2>
+            <h6>Ref. No.: {{ bundle.ref_no }}</h6>
+            <h6>Date: {{ bundle.date }}</h6>
+            <div class="col-sm-offset-1 col-sm-8">
+                <table class="table table-striped table-bordered text-center">
+                    <thead class="text-center">
+                        <tr>
+                            <th class="text-center text-uppercase">Category</th>
+                            <th class="text-center text-uppercase">Total Fees</th>
+                            <th class="text-center text-uppercase">Fees Due</th>
+                            <th class="text-center text-uppercase">Due Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr>
+                            <td>Primary</td>
+                            <td>{{ bundle.tfee1 }}</td>
+                            <td>{{ bundle.dfee1 }}</td>
+                            <td>{{ bundle.ddate1 }}</td>
+                        </tr>
+                        <tr>
+                            <td>Secondary</td>
+                            <td>{{ bundle.tfee2 }}</td>
+                            <td>{{ bundle.dfee2 }}</td>
+                            <td>{{ bundle.ddate2 }}</td>
+                        </tr>
+                        <tr>
+                            <td>Sr. Secondary</td>
+                            <td>{{ bundle.tfee2 }}</td>
+                            <td>{{ bundle.dfee2 }}</td>
+                            <td>{{ bundle.ddate2 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-offset-1 col-sm-8">
+                <b>Notes:</b><br>
+                <p>{{ bundle.notes }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

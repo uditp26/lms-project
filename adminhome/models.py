@@ -10,6 +10,9 @@ import os
 def get_upload_path(instance, filename):
     return 'resume/' + 'user_{0}/{1}'.format(instance.user.id, filename)
 
+def get_upload_path_feeCircular(instance, filename):
+    return 'fee_circulars/' + 'school_admin_{0}/{1}'.format(instance.school_admin.id, filename)
+
 class School(models.Model):
     school_code = models.CharField(max_length=20)
     school_admin = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -108,3 +111,14 @@ class Parent(models.Model):
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
+
+class Feecircular(models.Model):
+    ref_no = models.CharField(max_length=20)
+    school_admin = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_of_issue = models.DateField()
+    file_name = models.CharField(max_length=100)
+    pdf_ver = models.FileField(upload_to=get_upload_path_feeCircular, validators=[validate_file_extension])
+
+    def __str__(self):
+        return self.ref_no
+    

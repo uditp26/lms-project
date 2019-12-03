@@ -5,33 +5,28 @@ from adminhome.models import School, Teacher, Student
 import os
 
 def get_upload_path(instance, filename):
-    path = 'media/' + instance.school.school_code
-    # name =  instance.first_name + '_' + instance.last_name + '/'
-    rel_dir = ''
-    
+    path = 'media/' 
+    name = ""
     if type(instance) == Assignment:
-        path += '/Assignment/' + str(instance.class_number)+'/' + str(instance.subject)+'/'  #+ str(instance.assign_number)+'/'
-        rel_dir = '/Assignment/' + str(instance.class_number)+'/' + str(instance.subject)+'/' # + str(instance.assign_number)+'/'
+        path += 'Assignments/user_' + str(instance.assigned_by.id) 
+        name += str(instance.class_number)+'/' + str(instance.subject)+'/'
 
-    os.makedirs(os.path.join(path), exist_ok=True)
-    rel_path = instance.school.school_code + rel_dir
-
-    format1 = str(instance.subject) + str(instance.assign_number) + '.pdf'
-    return os.path.join(rel_path, format1)
+    format2 = str(instance.class_number)+'_'+str(instance.subject)+'_'+str(instance.assign_number) + '.pdf'
+    return 'Assignments/'+'user_{0}/{1}'.format(instance.assigned_by.id,format2)
 
 class Assignment(models.Model):
     class_number = models.IntegerField()
     subject = models.CharField(max_length = 30)
-    assigned_by = models.CharField(max_length = 30)
+
+    assigned_by = models.ForeignKey(Teacher, on_delete = models.DO_NOTHING)
     school = models.ForeignKey(School, on_delete=models.DO_NOTHING)
     assign_number = models.IntegerField()
     start_date = models.DateField()      
     due_date = models.DateField()
     assignment_file = models.FileField(upload_to=get_upload_path, validators=[validate_file_extension])
-    
     def __str__(self):
-        return str(self.class_number) + '/ ' + self.subject + '/ ' + str(self.assign_number) +'/ '+ str(self.due_date)
-                                                          
+        return str(str(self.assignment_file).replace("/","_").split(".")[0])
+
 class Attendance(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     roll_no = models.CharField(max_length=20)
