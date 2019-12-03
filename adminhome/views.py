@@ -33,7 +33,7 @@ from random import *
 min_char = 8
 max_char = 12
 
-decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://127.0.0.1:8000/applogin/')]
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
 
 def createNewUser(email, first_name, last_name, u_type):
     username = email.split('@')[0]

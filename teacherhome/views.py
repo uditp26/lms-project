@@ -8,6 +8,13 @@ from .forms import AddassignForm, AttendanceForm, AttendanceviewForm
 from adminhome.models import School, Student, Teacher
 from principalhome.models import Announcement
 
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.template import loader
+
 from collections import defaultdict
 from django.urls import reverse_lazy
 from django.http import Http404
@@ -20,7 +27,6 @@ from django.views.decorators.cache import cache_control
 #show pdf
 from django.contrib import messages
 from django.http import FileResponse
-from django.contrib.auth.decorators import login_required
 import os
 from django.conf import settings
 
@@ -30,6 +36,8 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
 
 def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
@@ -75,8 +83,6 @@ def sendSetPasswordMail(request, new_user, first_name, username, current_user, e
         fail_silently=False,
         html_message=html_message
     )
-
-decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http:/127.0.0.1:8000/applogin/')]
                                          
 @method_decorator(decorators, name='dispatch')
 class TeacherhomepageView(View):
@@ -127,6 +133,7 @@ class AddassignFormView(View):
             return redirect('teacherhome:view_assign')
         return render(request, self.template_name, {'form': form})  
 
+@method_decorator(decorators, name='dispatch')
 class SeeAssignmentView(View):
     template_name = 'teacherhome/assignment_see.html'
     def get(self, request, path):
@@ -142,6 +149,7 @@ class SeeAssignmentView(View):
         rel_path = 'media/'+str(filename[0])+'/'+str(filename[1])+"_"+str(filename[2])+'/'+str(filename2)+".pdf"
         return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
 
+@method_decorator(decorators, name='dispatch')
 class AssignmentView(View):
     template_name = 'teacherhome/assignment_view.html'
 
@@ -451,12 +459,15 @@ class SendResultView(View):
     def get(self, request):
         return render(request, self.template_name)
 
+@method_decorator(decorators, name='dispatch')
 class NotificationView(View):
     template_name = 'teacherhome/notification.html'
     # context = {'admin': LocalAdmin.objects.get(pk=1)} # use filter()
     def get(self, request):
         current_user = request.user
         return render(request, self.template_name, {'current_user': current_user})
+
+@method_decorator(decorators, name='dispatch')
 class ScheduleView(View):
     template_name = 'teacherhome/schedule.html'
     # context = {'admin': LocalAdmin.objects.get(pk=1)} # use filter()
@@ -471,6 +482,7 @@ class LogoutView(View):
         logout(request)
         return HttpResponseRedirect(reverse('applogin:login'))
 
+@method_decorator(decorators, name='dispatch')
 class TeacherUpdateView(UpdateView):
     model = Teacher
     fields = ['first_name', 'last_name', 'date_of_birth', 'joining_date', 'email', 'phone', 'is_class_teacher', 'subject', 'resume']
