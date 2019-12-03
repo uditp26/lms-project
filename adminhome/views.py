@@ -8,7 +8,7 @@ from .forms import AddstudentForm, AddteacherForm, RegisterschoolForm, Addprinci
 from applogin.models import User
 
 from django.http import Http404
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 # from django.contrib import messages
 
 from django.contrib.sites.shortcuts import get_current_site
@@ -93,6 +93,25 @@ def sendSetPasswordMail(request, new_user, first_name, username, current_user, e
         fail_silently=False,
         html_message=html_message
     )
+
+def sendFeeReminderMail(current_user, fee_obj, fileData):
+
+    sch_obj = current_user.school
+    students = Student.objects.filter(school=sch_obj)
+
+    mailing_list = []
+    for s in students:
+        mailing_list.append(s.email)
+
+    draft_email = EmailMessage(
+        'Reminder for Fee Payment',
+        'Please find attached the fee circular for this academic year. For fee payment and related queries, please visit the admin office. Please ignore if the fees has already been paid.',
+        str(current_user),
+        mailing_list,
+    )
+
+    draft_email.attach(fee_obj.file_name, fileData, 'application/pdf')
+    draft_email.send()
 
 @method_decorator(decorators, name='dispatch')
 class HomepageView(View):
@@ -481,4 +500,8 @@ class AddFeeCircularView(View):
         fee_obj = Feecircular(ref_no=ref_no, school_admin=current_user, date_of_issue=datetime.date.today().strftime('%Y-%m-%d'), file_name=file_name)
         fee_obj.save()
         fee_obj.pdf_ver.save(file_name, file_data)
+
+        # Fee Reminder Mail
+        sendFeeReminderMail(current_user, fee_obj, fileData)
+
         return HttpResponseRedirect(reverse('adminhome:feecirculars'))
