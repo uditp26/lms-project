@@ -8,19 +8,10 @@ from .validators import validate_file_extension
 import os
 
 def get_upload_path(instance, filename):
-    path = 'media/' + instance.school.school_code
-    name =  instance.first_name + '_' + instance.last_name + '/'
-    rel_dir = ''
+    return 'resume/' + 'user_{0}/{1}'.format(instance.user.id, filename)
 
-    if type(instance) == Teacher:
-        path += '/Teachers/'
-        rel_dir = '/Teachers/'
-    elif type(instance) == Principal:
-        path += '/Principal/'
-        rel_dir = '/Principal/'
-    os.makedirs(os.path.join(path, name), exist_ok=True)
-    rel_path = instance.school.school_code + rel_dir + name
-    return os.path.join(rel_path, filename)
+def get_upload_path_feeCircular(instance, filename):
+    return 'fee_circulars/' + 'school_admin_{0}/{1}'.format(instance.school_admin.id, filename)
 
 class School(models.Model):
     school_code = models.CharField(max_length=20)
@@ -120,3 +111,14 @@ class Parent(models.Model):
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
+
+class Feecircular(models.Model):
+    ref_no = models.CharField(max_length=20)
+    school_admin = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_of_issue = models.DateField()
+    file_name = models.CharField(max_length=100)
+    pdf_ver = models.FileField(upload_to=get_upload_path_feeCircular, validators=[validate_file_extension])
+
+    def __str__(self):
+        return self.ref_no
+    
