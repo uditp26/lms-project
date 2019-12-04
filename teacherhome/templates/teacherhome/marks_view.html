@@ -25,16 +25,14 @@
                 </tr>
             </thead>
             <tbody>
-                
                 {% for key, a_value in marksheets.items %}
                     <tr>
                         <td>{{ key }}</a></td>
                         <td>{{ a_value.roll_no }}</a></td>
                         <td>{{ a_value.name }}</td>
                         <td>{{ a_value.date }}</td>
-                        <td><a href="{% url 'teacherhome:seemarks'  a_value %}">View marksheet</a></td>
+                        <td><a href="{{ a_value.marksheet_file.url }}" target="_new">View marksheet</a></td>
                         </object></td>
-                        
                     </tr>
                 {% endfor %}
             </tbody>

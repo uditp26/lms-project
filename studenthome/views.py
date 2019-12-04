@@ -78,37 +78,6 @@ class MarksView(View):
             key += 1 
         return render(request, self.template_name, {'marksheets': bundle})
 
-class SeeMarksView(View):
-    template_name = 'studenthome/marks_see.html'
-    def get(self, request, path):
-        filename =str(path).split('_')
-        filename1 = []
-        for i in range(3,len(filename)):
-            filename1.append(filename[i])
-        filename2 = ''
-        for i in range(len(filename1)):
-            filename2 += filename1[i]
-            if i+1 < len(filename1):
-                filename2 += '_'
-        rel_path = 'media/'+str(filename[0])+'/'+str(filename[1])+"_"+str(filename[2])+'/'+str(filename2)+".pdf"
-        return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
-
-
-class SeeAssignmentView(View):
-    template_name = 'teacherhome/assignment_see.html'
-    def get(self, request, path):
-        filename =str(path).split('_')
-        filename1 = []
-        for i in range(3,len(filename)):
-            filename1.append(filename[i])
-        filename2 = ''
-        for i in range(len(filename1)):
-            filename2 += filename1[i]
-            if i+1 < len(filename1):
-                filename2 += '_'
-        rel_path = 'media/'+str(filename[0])+'/'+str(filename[1])+"_"+str(filename[2])+'/'+str(filename2)+".pdf"
-        return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
-
 @method_decorator(decorators, name='dispatch')
 class AssignmentView(View):
     template_name = 'studenthome/all_assignment.html'
