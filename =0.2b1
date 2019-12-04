@@ -1,0 +1,11 @@
+Requirement already satisfied: xhtml2pdf in /usr/local/lib/python3.6/dist-packages
+Requirement already satisfied: html5lib>=1.0 in /usr/local/lib/python3.6/dist-packages (from xhtml2pdf)
+Requirement already satisfied: pyPdf2 in /usr/local/lib/python3.6/dist-packages (from xhtml2pdf)
+Collecting Pillow (from xhtml2pdf)
+  Downloading https://files.pythonhosted.org/packages/10/5c/0e94e689de2476c4c5e644a3bd223a1c1b9e2bdb7c510191750be74fa786/Pillow-6.2.1-cp36-cp36m-manylinux1_x86_64.whl (2.1MB)
+Collecting reportlab>=3.0 (from xhtml2pdf)
+  Downloading https://files.pythonhosted.org/packages/e4/e9/c38f4537064cd4e28fb9e39edc3611ff6c65aa8871b537e55721ca9f9fda/reportlab-3.5.32-cp36-cp36m-manylinux1_x86_64.whl (2.6MB)
+Requirement already satisfied: six in /usr/lib/python3/dist-packages (from xhtml2pdf)
+Requirement already satisfied: webencodings in /usr/local/lib/python3.6/dist-packages (from html5lib>=1.0->xhtml2pdf)
+Installing collected packages: Pillow, reportlab
+Successfully installed Pillow-6.2.1 reportlab-3.5.32
