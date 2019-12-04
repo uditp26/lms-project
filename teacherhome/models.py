@@ -8,11 +8,11 @@ def get_upload_path(instance, filename):
     path = 'media/' 
     name = ""
     if type(instance) == Assignment:
-        path += 'Assignments/user_' + str(instance.assigned_by.id) 
+        path += 'assignments/user_' + str(instance.assigned_by.id) 
         name += str(instance.class_number)+'/' + str(instance.subject)+'/'
 
     format2 = str(instance.class_number)+'_'+str(instance.subject)+'_'+str(instance.assign_number) + '.pdf'
-    return 'Assignments/'+'user_{0}/{1}'.format(instance.assigned_by.id,format2)
+    return 'assignments/'+'user_{0}/{1}'.format(instance.assigned_by.id,format2)
 
 class Assignment(models.Model):
     class_number = models.IntegerField()

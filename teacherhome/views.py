@@ -83,7 +83,7 @@ def sendSetPasswordMail(request, new_user, first_name, username, current_user, e
         fail_silently=False,
         html_message=html_message
     )
-                                         
+
 @method_decorator(decorators, name='dispatch')
 class TeacherhomepageView(View):
     template_name = 'teacherhome/teacherhomepage.html'
