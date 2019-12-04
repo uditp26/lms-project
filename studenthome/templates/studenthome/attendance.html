@@ -1,34 +1,42 @@
 {% extends 'studenthome/base.html' %}
 
 {% block body %}
-
-<div style="padding-top: 10px; padding-bottom: 10px">
-    <div class="container" style=" height: 120px; background-color: lightcyan">
-            <h1>Your are absent on dates</h1>
-            
+{% if attendance%}
+    <div style="padding-top: 10px; padding-bottom: 10px">
+        <div class="container" style=" height: 120px; background-color: lightcyan">
+                <h1>Your are absent on dates</h1>
+                
+        </div>
     </div>
-</div>
 
-<div class="container">
+    <div class="container">
 
-    <div class="col-sm-offset-1 col-sm-8">
-        <table class="table table-striped table-bordered text-center">
-            <thead>
-                <tr>
-                    <th class="text-center text-uppercase">Date</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="col-sm-offset-1 col-sm-8">
+        
+            <table class="table table-striped table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th class="text-center text-uppercase">Date</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    {% for i in attendance %}
-                        <tr>
-                            <td>{{ i.absent_on }}</td>
-                        </tr>
-                    {% endfor %}
+                    <tbody>
+                        {% for i in attendance %}
+                            <tr>
+                                <td>{{ i.absent_on }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
                 </tbody>
-            </tbody>
-        </table>
+            </table>
+        
+        </div>
     </div>
-</div>
-
+{% else %}
+    <div class="card" style="padding: 1cm">
+        <div class="card-header">
+            <h2>You are not absent yet!</h2>
+        </div>
+    </div>
+{% endif %}
 {% endblock %}

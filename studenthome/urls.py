@@ -11,6 +11,9 @@ urlpatterns = [
     url(r'allassignment/$', views.AssignmentView.as_view(), name='allassignment'),
     url(r'currentassignment/$', views.CurrentassignmentView.as_view(), name='currentassignment'),
     path('seeassign/<slug:path>/', views.SeeAssignmentView.as_view(), name='seeassign'), 
+
+    url(r'view_marks/$', views.MarksView.as_view(), name='view_marks'),
+    path('seemarks/<slug:path>/', views.SeeMarksView.as_view(), name='seemarks'),
     
     url(r'announcement/$', views.AnnouncementView.as_view(), name='announcement'),
     path('announcement/<slug:announcement>/', views.AnnouncementDetailView.as_view(), name='announcement_detail'),

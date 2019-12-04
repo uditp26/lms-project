@@ -3,7 +3,7 @@ from django.views import generic, View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import logout
 from .models import Assignment, Attendance, Marksdetails
-from .forms import AddassignForm, AttendanceForm, AttendanceviewForm
+from .forms import AddassignForm, AttendanceForm, AttendanceviewForm, AddmarksForm
 
 from adminhome.models import School, Student, Teacher
 from principalhome.models import Announcement
@@ -99,6 +99,62 @@ class TeacherhomepageView(View):
                 bundle = {'name':name, 'subject': subject}
                 return render(request, self.template_name, {'teacher':bundle})
 
+
+@method_decorator(decorators, name='dispatch')
+class AddmarksFormView(View):
+    form_class = AddmarksForm
+    template_name = 'teacherhome/addmarks_form.html'
+
+    # display blank form
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    # process form data
+    def post(self, request):
+        form = self.form_class(request.POST, request.FILES)
+        current_user = request.user
+        teacher = Teacher.objects.get(user = current_user)  
+        
+        if form.is_valid():
+            addmarks = form.save(commit = False)
+            addmarks.teacher =  teacher
+            student = Student.objects.get(study = teacher.class_teacher_of, school = teacher.school, roll_no = addmarks.roll_no)
+            addmarks.name  = str(student.first_name) +' '+ str(student.last_name)
+            addmarks.save()
+
+            return redirect('teacherhome:view_marks')
+        return render(request, self.template_name, {'form': form})  
+
+class MarksView(View):
+    template_name = 'teacherhome/marks_view.html'
+
+    def get(self, request):
+        current_user = request.user
+        teacher = Teacher.objects.get(user = current_user)  
+        marksheets = Marksdetails.objects.filter(teacher = teacher)
+
+        bundle = dict()
+        key = 1
+        for a in marksheets:
+            bundle[key] = a
+            key += 1 
+        return render(request, self.template_name, {'marksheets': bundle})
+
+class SeeMarksView(View):
+    template_name = 'teacherhome/marks_see.html'
+    def get(self, request, path):
+        filename =str(path).split('_')
+        filename1 = []
+        for i in range(3,len(filename)):
+            filename1.append(filename[i])
+        filename2 = ''
+        for i in range(len(filename1)):
+            filename2 += filename1[i]
+            if i+1 < len(filename1):
+                filename2 += '_'
+        rel_path = 'media/'+str(filename[0])+'/'+str(filename[1])+"_"+str(filename[2])+'/'+str(filename2)+".pdf"
+        return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
 
 @method_decorator(decorators, name='dispatch')
 class AddassignFormView(View):

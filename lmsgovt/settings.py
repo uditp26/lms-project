@@ -52,11 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.auth',
-<<<<<<< HEAD
 
     # 'rest_framework',
-=======
->>>>>>> 37fef937eeb091367d6311c17a8a68ef85ba8338
     'applogin.apps.ApploginConfig',
     'teacherhome.apps.TeacherhomeConfig',
     'adminhome.apps.AdminhomeConfig',
@@ -99,20 +96,27 @@ WSGI_APPLICATION = 'lmsgovt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
 # DATABASE_NAME = os.environ['LMSGOVT_DB']
 # DB_USER = os.environ['PGRES_USER']
 # DB_PWD = os.environ['PGRES_PWD']
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'lms_db',
-	'USER': 'lms_user',
-	'PASSWORD': 'lms@pwd#',
-	'HOST': 'localhost',
-	'PORT': ''
-    }
-}
+# DATABASES = {
+#     'default': {
+#     'ENGINE': 'django.db.backends.postgresql',
+#     'NAME': 'lms_db',
+# 	'USER': 'lms_user',
+# 	'PASSWORD': 'lms@pwd#',
+# 	'HOST': 'localhost',
+# 	'PORT': ''
+#     }
+# }
 
 
 # Password validation

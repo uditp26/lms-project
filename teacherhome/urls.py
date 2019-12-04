@@ -9,11 +9,15 @@ app_name = 'teacherhome'
 urlpatterns = [
     url(r'^$', views.TeacherhomepageView.as_view(), name='teacher_homepage'),
     url(r'logout/$', views.LogoutView.as_view(), name='logout'),
+    
     url(r'add_assign/$', views.AddassignFormView.as_view(), name='add_assign'),
-
     url(r'view_assign/$', views.AssignmentView.as_view(), name='view_assign'),
     path('seeassign/<slug:path>/', views.SeeAssignmentView.as_view(), name='seeassign'),
 
+    
+    url(r'add_marks/$', views.AddmarksFormView.as_view(), name='add_marks'),    
+    url(r'view_marks/$', views.MarksView.as_view(), name='view_marks'),
+    path('seemarks/<slug:path>/', views.SeeMarksView.as_view(), name='seemarks'),
 
     url(r'sendattendance/$', views.SendAttendanceView.as_view(), name='absentmsg'),
     url(r'attendance/$', views.AttendanceFormView.as_view(), name='attendance'),

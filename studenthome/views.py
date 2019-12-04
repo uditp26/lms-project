@@ -9,7 +9,7 @@ import os
 from applogin.models import User
 
 from adminhome.models import Teacher, School, Student, Principal
-from teacherhome.models import Attendance, Assignment
+from teacherhome.models import Attendance, Assignment, Marksdetails
 from principalhome.models import Announcement
 
 from time import gmtime, strftime
@@ -28,20 +28,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 
 decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://127.0.0.1:8000/applogin/')]
-
-# def download_file(request):
-#     # fill these variables with real values
-
-#     path = 'media/' + instance.school.school_code
-#     path += '/Assignment/' + str(instance.class_number)+'/' + str(instance.subject)+'/'
-#     fl_path = path
-#     filename = str(assignment.subject) + str(assignment.assign_no) + '.pdf'
-
-#     fl = open(fl_path, 'r’)
-#     mime_type, _ = mimetypes.guess_type(fl_path)
-#     response = HttpResponse(fl, content_type=mime_type)
-#     response['Content-Disposition'] = "attachment; filename=%s" % filename
-#         return response
 
 @method_decorator(decorators, name='dispatch') #if you go back after login it will give error
 class TeacherhomepageView(View):
@@ -75,14 +61,52 @@ class AttendanceView(View):
         attendance = Attendance.objects.filter(school = student.school, roll_no = student.roll_no, study = student.study)
         return render(request, self.template_name, {'attendance': attendance})
 
-class SeeAssignmentView(View):
-    template_name = 'studenthome/assignment_see.html'
+class MarksView(View):
+    template_name = 'studenthome/marks_view.html'
 
+    def get(self, request):
+        current_user = request.user
+        student = Student.objects.get(user = current_user) 
+
+        teacher = Teacher.objects.get(class_teacher_of = student.study, school = student.school)  
+        marksheets = Marksdetails.objects.filter(roll_no = student.roll_no, teacher = teacher)
+
+        bundle = dict()
+        key = 1
+        for a in marksheets:
+            bundle[key] = a
+            key += 1 
+        return render(request, self.template_name, {'marksheets': bundle})
+
+class SeeMarksView(View):
+    template_name = 'studenthome/marks_see.html'
     def get(self, request, path):
-        print(path)
-        filename =str(path).replace("_","/")
-        rel_path = 'media/'+filename+".pdf"
-        print(rel_path)
+        filename =str(path).split('_')
+        filename1 = []
+        for i in range(3,len(filename)):
+            filename1.append(filename[i])
+        filename2 = ''
+        for i in range(len(filename1)):
+            filename2 += filename1[i]
+            if i+1 < len(filename1):
+                filename2 += '_'
+        rel_path = 'media/'+str(filename[0])+'/'+str(filename[1])+"_"+str(filename[2])+'/'+str(filename2)+".pdf"
+        return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
+
+
+class SeeAssignmentView(View):
+    template_name = 'teacherhome/assignment_see.html'
+    def get(self, request, path):
+        filename =str(path).split('_')
+        filename1 = []
+        for i in range(3,len(filename)):
+            filename1.append(filename[i])
+        filename2 = ''
+        for i in range(len(filename1)):
+            filename2 += filename1[i]
+            if i+1 < len(filename1):
+                filename2 += '_'
+        rel_path = 'media/'+str(filename[0])+'/'+str(filename[1])+"_"+str(filename[2])+'/'+str(filename2)+".pdf"
         return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
 
 @method_decorator(decorators, name='dispatch')

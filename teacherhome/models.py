@@ -14,6 +14,10 @@ def get_upload_path(instance, filename):
     format2 = str(instance.class_number)+'_'+str(instance.subject)+'_'+str(instance.assign_number) + '.pdf'
     return 'Assignments/'+'user_{0}/{1}'.format(instance.assigned_by.id,format2)
 
+def get_upload_marksheet_path(instance, filename):
+    format2 = 'class_'+str(instance.teacher.class_teacher_of)+'_'+'rollno_'+str(instance.roll_no)+ '.pdf'
+    return 'Marksheet/'+'user_{0}/{1}'.format(instance.teacher.id,format2)
+
 class Assignment(models.Model):
     class_number = models.IntegerField()
     subject = models.CharField(max_length = 30)
@@ -38,18 +42,14 @@ class Attendance(models.Model):
         return str(self.school) +' ' + str(self.absent_on) + ' ' + self.name
 
 class Marksdetails(models.Model):
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
-    study = models.PositiveIntegerField()
-    roll_no = models.CharField(max_length=20)
+    teacher = models.ForeignKey(Teacher, on_delete = models.DO_NOTHING)
     name = models.CharField(max_length=20)
-    half_yearly_marks = models.PositiveIntegerField(default=0, blank=True, null=True)
-    final_marks = models.PositiveIntegerField(default=0, blank=True, null=True)
-    
-    def __str__(self):
-        return self.name
+    roll_no = models.CharField(max_length=20)
+    marksheet_file = models.FileField(upload_to=get_upload_marksheet_path, validators=[validate_file_extension])
+    date = models.DateField()
 
-    def name_to_url(self):
-        return self.study + '-' + self.roll_no
+    def __str__(self):
+        return str(str(self.marksheet_file).replace("/","_").split(".")[0])
 
 # The structure of the below table is not appropriately defined.(Just for testing :) ) 
 # class SendAttendance(models.Model):
