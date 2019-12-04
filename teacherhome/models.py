@@ -5,18 +5,12 @@ from adminhome.models import School, Teacher, Student
 import os
 
 def get_upload_path(instance, filename):
-    path = 'media/' 
-    name = ""
-    if type(instance) == Assignment:
-        path += 'Assignments/user_' + str(instance.assigned_by.id) 
-        name += str(instance.class_number)+'/' + str(instance.subject)+'/'
-
     format2 = str(instance.class_number)+'_'+str(instance.subject)+'_'+str(instance.assign_number) + '.pdf'
-    return 'Assignments/'+'user_{0}/{1}'.format(instance.assigned_by.id,format2)
+    return 'assignments/'+'user_{0}/{1}'.format(instance.assigned_by.id,format2)
 
 def get_upload_marksheet_path(instance, filename):
     format2 = 'class_'+str(instance.teacher.class_teacher_of)+'_'+'rollno_'+str(instance.roll_no)+ '.pdf'
-    return 'Marksheet/'+'user_{0}/{1}'.format(instance.teacher.id,format2)
+    return 'marksheets/'+'user_{0}/{1}'.format(instance.teacher.id,format2)
 
 class Assignment(models.Model):
     class_number = models.IntegerField()
