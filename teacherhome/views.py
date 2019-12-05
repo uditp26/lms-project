@@ -3,7 +3,7 @@ from django.views import generic, View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import logout
 from .models import Assignment, Attendance, Marksdetails
-from .forms import AddassignForm, AttendanceForm, AttendanceviewForm
+from .forms import AddassignForm, AttendanceForm, AttendanceviewForm, AddmarksForm
 
 from adminhome.models import School, Student, Teacher
 from principalhome.models import Announcement
@@ -107,6 +107,47 @@ class TeacherhomepageView(View):
 
 
 @method_decorator(decorators, name='dispatch')
+class AddmarksFormView(View):
+    form_class = AddmarksForm
+    template_name = 'teacherhome/addmarks_form.html'
+
+    # display blank form
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    # process form data
+    def post(self, request):
+        form = self.form_class(request.POST, request.FILES)
+        current_user = request.user
+        teacher = Teacher.objects.get(user = current_user)  
+        
+        if form.is_valid():
+            addmarks = form.save(commit = False)
+            addmarks.teacher =  teacher
+            student = Student.objects.get(study = teacher.class_teacher_of, school = teacher.school, roll_no = addmarks.roll_no)
+            addmarks.name  = str(student.first_name) +' '+ str(student.last_name)
+            addmarks.save()
+
+            return redirect('teacherhome:view_marks')
+        return render(request, self.template_name, {'form': form})  
+
+class MarksView(View):
+    template_name = 'teacherhome/marks_view.html'
+
+    def get(self, request):
+        current_user = request.user
+        teacher = Teacher.objects.get(user = current_user)  
+        marksheets = Marksdetails.objects.filter(teacher = teacher)
+
+        bundle = dict()
+        key = 1
+        for a in marksheets:
+            bundle[key] = a
+            key += 1 
+        return render(request, self.template_name, {'marksheets': bundle})
+
+@method_decorator(decorators, name='dispatch')
 class AddassignFormView(View):
     form_class = AddassignForm
     template_name = 'teacherhome/addassign_form.html'
@@ -133,23 +174,6 @@ class AddassignFormView(View):
             return redirect('teacherhome:view_assign')
         return render(request, self.template_name, {'form': form})  
 
-@method_decorator(decorators, name='dispatch')
-class SeeAssignmentView(View):
-    template_name = 'teacherhome/assignment_see.html'
-    def get(self, request, path):
-        filename =str(path).split('_')
-        filename1 = []
-        for i in range(3,len(filename)):
-            filename1.append(filename[i])
-        filename2 = ''
-        for i in range(len(filename1)):
-            filename2 += filename1[i]
-            if i+1 < len(filename1):
-                filename2 += '_'
-        rel_path = 'media/'+str(filename[0])+'/'+str(filename[1])+"_"+str(filename[2])+'/'+str(filename2)+".pdf"
-        return FileResponse(open(rel_path, 'rb'), content_type='application/pdf')
-
-@method_decorator(decorators, name='dispatch')
 class AssignmentView(View):
     template_name = 'teacherhome/assignment_view.html'
 
@@ -231,36 +255,23 @@ class ShowAttendanceView(View):
         bundle = dict()
         if teacher.is_class_teacher:    
             current_user = request.user
-            # teacher = Teacher.objects.get(user = current_user)
-            # students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
-            
-            #edit from here.......................
 
             absent_date = datetime.date.today()
             absent = Attendance.objects.filter(school = teacher.school, study = teacher.class_teacher_of, absent_on = absent_date)
-            
-            # roll_number = []
-            # for i  in all_absent:
-            #     if i.roll_no not in roll_number:
-            #         roll_number.append(i.roll_no)
 
             key = 1
             for i in absent:
                 bundle[key] = i
                 key += 1 
-            
-            # html = template.render({'bundle': bundle})
+
             pdf = render_to_pdf('teacherhome/sendattendance.html', {'bundle': bundle})
             return HttpResponse(pdf, content_type='application/pdf')
             
-            # return HttpResponse(html)
-
-            # return render(request, self.template_name, {'bundle': bundle})
         else:
             return redirect('teacherhome:notallowed')
                                          
     def post(self, request):
-        #yet to be completed
+
         return render(request, self.template_name)
 
 
@@ -310,9 +321,6 @@ class SendAttendanceView(View):
         bundle = dict()
         if teacher.is_class_teacher:    
             current_user = request.user
-            # teacher = Teacher.objects.get(user = current_user)
-            # students = Student.objects.filter(school = teacher.school,  study = teacher.class_teacher_of)
-            
 
             absent_date = datetime.date.today()
             absent = Attendance.objects.filter(school = teacher.school, study = teacher.class_teacher_of, absent_on = absent_date)
@@ -321,19 +329,14 @@ class SendAttendanceView(View):
             for i in absent:
                 bundle[key] = i
                 key += 1 
-            
-            # html = template.render({'bundle': bundle})
+
             pdf = render_to_pdf('teacherhome/sendattendance.html', {'bundle': bundle})
             return HttpResponse(pdf, content_type='application/pdf')
-            
-            # return HttpResponse(html)
 
-            # return render(request, self.template_name, {'bundle': bundle})
         else:
             return redirect('teacherhome:notallowed')
                                          
     def post(self, request):
-        #yet to be completed
         return render(request, self.template_name)
 
 # Dont delete below code

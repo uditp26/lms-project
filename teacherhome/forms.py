@@ -8,6 +8,15 @@ from .models import Assignment, Attendance, Marksdetails
 
 from django.forms import formset_factory
 
+
+class AddmarksForm(forms.ModelForm):
+    roll_no = forms.IntegerField()
+    marksheet_file = forms.FileField()
+    date = forms.DateTimeField(widget=forms.TextInput(attrs={'class':'datetime-input'}))
+    class Meta:
+        model = Marksdetails
+        fields = ['roll_no', 'marksheet_file','date']
+
 class AddassignForm(forms.ModelForm):
     class_number = forms.IntegerField()
     subject = forms.CharField(max_length = 20)
