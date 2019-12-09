@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">xx
+        <meta charset="utf-8">
         
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}LMS{% endblock %}</title>
@@ -66,7 +66,7 @@
                         </a>
                     </li>
 
-                    <li class="dropdown">
+                    {% comment %} <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">&nbsp;<span class="glyphicon glyphicon-envelope"></span> Send Message <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>
@@ -79,7 +79,7 @@
                                 <a href="#">Send Results</a>
                             </li>
                         </ul>
-                    </li>
+                    </li> {% endcomment %}
                 </ul>
                
                 <ul class="nav navbar-nav navbar-right">
