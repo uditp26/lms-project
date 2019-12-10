@@ -49,7 +49,6 @@ class AttendanceForm(forms.ModelForm):
         )
 
     def extra_responses(self):
-
         for name, value in self.cleaned_data.items():
             yield (self.fields[name].label, value)
 

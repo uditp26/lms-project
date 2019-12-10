@@ -24,7 +24,7 @@ SECRET_KEY = 'nac3u_9r5312_mewx(l=q4h7=8z+@w@*2htxau_bp8d6kn0_c)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # python -m smtpd -n -c DebuggingServer localhost:1025
 
@@ -171,4 +171,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
-LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/applogin/'
+LOGOUT_REDIRECT_URL = 'http://192.168.2.225:1207/lms/applogin/'
