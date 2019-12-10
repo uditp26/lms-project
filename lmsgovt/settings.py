@@ -28,18 +28,18 @@ ALLOWED_HOSTS = ['*']
 
 # python -m smtpd -n -c DebuggingServer localhost:1025
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
 
 # add account credentials here
 
-# EMAIL_HOST = socket.gethostbyname('smtp.gmail.com')
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'lmssuperuser5@gmail.com'
-# EMAIL_HOST_PASSWORD = 'Admin@lms#'
-# EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = 'lmssuperuser5@gmail.com'
+EMAIL_HOST = socket.gethostbyname('smtp.gmail.com')
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'lmssuperuser5@gmail.com'
+EMAIL_HOST_PASSWORD = 'Admin@lms#'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'lmssuperuser5@gmail.com'
 
 PHONENUMBER_DEFAULT_REGION = 'IN'
 

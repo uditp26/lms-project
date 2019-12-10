@@ -29,7 +29,9 @@ MANIFEST
 
 */migrations/*
 */__pycache__/*
+*/media/*
 
+media/*
 adminhome/__pycache__/*
 adminhome/migrations/*
 
