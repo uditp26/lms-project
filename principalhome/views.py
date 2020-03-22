@@ -14,7 +14,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 
-decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://185.201.9.188:80/lms/applogin/')]
 
 @method_decorator(decorators, name='dispatch')
 class HomepageView(View):

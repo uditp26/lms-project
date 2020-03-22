@@ -27,7 +27,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 
-decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://185.201.9.188:80/lms/applogin/')]
 
 @method_decorator(decorators, name='dispatch') #if you go back after login it will give error
 class TeacherhomepageView(View):
@@ -67,10 +67,12 @@ class MarksView(View):
     def get(self, request):
         current_user = request.user
         student = Student.objects.get(user = current_user) 
-
-        teacher = Teacher.objects.get(class_teacher_of = student.study, school = student.school)  
-        marksheets = Marksdetails.objects.filter(roll_no = student.roll_no, teacher = teacher)
-
+        try:
+            teacher = Teacher.objects.get(class_teacher_of = student.study, school = student.school)  
+            marksheets = Marksdetails.objects.filter(roll_no = student.roll_no, teacher = teacher)
+        except:
+            marksheets=[]
+            pass
         bundle = dict()
         key = 1
         for a in marksheets:

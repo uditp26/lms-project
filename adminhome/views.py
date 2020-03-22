@@ -33,10 +33,12 @@ from random import *
 min_char = 8
 max_char = 12
 
-decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://185.201.9.188:80/lms/applogin/')]
 
 def createNewUser(email, first_name, last_name, u_type):
     username = email.split('@')[0]
+
+    username = username.replace('.', '-')
 
     # check for unique username
     similar_users = len(User.objects.filter(username=username))
@@ -63,7 +65,7 @@ def sendSetPasswordMail(request, new_user, first_name, username, current_user, e
 
     current_site = get_current_site(request)
     domain = current_site.domain
-    uid = urlsafe_base64_encode(force_bytes(new_user.pk))
+    uid = urlsafe_base64_encode(force_bytes(new_user.pk)).decode()
     token = default_token_generator.make_token(new_user)
     protocol = 'http'
 

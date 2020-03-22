@@ -37,7 +37,7 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
-decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://192.168.2.225:1207/lms/applogin/')]
+decorators = [cache_control(no_cache=True, must_revalidate=True, no_store=True), login_required(login_url='http://185.201.9.188:80/lms/applogin/')]
 
 def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
@@ -53,7 +53,7 @@ def sendSetPasswordMail(request, new_user, first_name, username, current_user, e
 
     current_site = get_current_site(request)
     domain = current_site.domain
-    uid = urlsafe_base64_encode(force_bytes(new_user.pk))
+    uid = urlsafe_base64_encode(force_bytes(new_user.pk)).decode()
     token = default_token_generator.make_token(new_user)
     protocol = 'http'
 
@@ -125,10 +125,15 @@ class AddmarksFormView(View):
         if form.is_valid():
             addmarks = form.save(commit = False)
             addmarks.teacher =  teacher
-            student = Student.objects.get(study = teacher.class_teacher_of, school = teacher.school, roll_no = addmarks.roll_no)
-            addmarks.name  = str(student.first_name) +' '+ str(student.last_name)
-            addmarks.save()
-
+            if teacher.is_class_teacher:
+                try:
+                    student = Student.objects.get(study = teacher.class_teacher_of, school = teacher.school, roll_no = addmarks.roll_no)
+                    addmarks.name  = str(student.first_name) +' '+ str(student.last_name)
+                    addmarks.save()
+                except:
+                    return redirect('teacherhome:notallowed')
+            else:
+                return redirect('teacherhome:notallowed')
             return redirect('teacherhome:view_marks')
         return render(request, self.template_name, {'form': form})  
 
@@ -137,15 +142,18 @@ class MarksView(View):
 
     def get(self, request):
         current_user = request.user
-        teacher = Teacher.objects.get(user = current_user)  
-        marksheets = Marksdetails.objects.filter(teacher = teacher)
+        teacher = Teacher.objects.get(user = current_user)
+        if teacher.is_class_teacher:
+            marksheets = Marksdetails.objects.filter(teacher = teacher)
 
-        bundle = dict()
-        key = 1
-        for a in marksheets:
-            bundle[key] = a
-            key += 1 
-        return render(request, self.template_name, {'marksheets': bundle})
+            bundle = dict()
+            key = 1
+            for a in marksheets:
+                bundle[key] = a
+                key += 1 
+            return render(request, self.template_name, {'marksheets': bundle})
+        else:
+            return redirect('teacherhome:notallowed')
 
 @method_decorator(decorators, name='dispatch')
 class AddassignFormView(View):
