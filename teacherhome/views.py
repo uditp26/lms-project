@@ -125,10 +125,16 @@ class AddmarksFormView(View):
         if form.is_valid():
             addmarks = form.save(commit = False)
             addmarks.teacher =  teacher
-            student = Student.objects.get(study = teacher.class_teacher_of, school = teacher.school, roll_no = addmarks.roll_no)
-            addmarks.name  = str(student.first_name) +' '+ str(student.last_name)
-            addmarks.save()
-
+            if teacher.is_class_teacher:
+                try:
+                    student = Student.objects.get(study = teacher.class_teacher_of, school = teacher.school, roll_no = addmarks.roll_no)
+                    addmarks.name  = str(student.first_name) +' '+ str(student.last_name)
+                    addmarks.save()
+                except:
+                    pass
+                    return redirect('teacherhome:notallowed')
+            else:
+                return redirect('teacherhome:notallowed')            
             return redirect('teacherhome:view_marks')
         return render(request, self.template_name, {'form': form})  
 
@@ -137,15 +143,18 @@ class MarksView(View):
 
     def get(self, request):
         current_user = request.user
-        teacher = Teacher.objects.get(user = current_user)  
-        marksheets = Marksdetails.objects.filter(teacher = teacher)
-
-        bundle = dict()
-        key = 1
-        for a in marksheets:
-            bundle[key] = a
-            key += 1 
-        return render(request, self.template_name, {'marksheets': bundle})
+        teacher = Teacher.objects.get(user = current_user) 
+        if teacher.is_class_teacher:
+            marksheets = Marksdetails.objects.filter(teacher = teacher)
+            
+            bundle = dict()
+            key = 1
+            for a in marksheets:
+                bundle[key] = a
+                key += 1 
+            return render(request, self.template_name, {'marksheets': bundle})
+        else:
+            return redirect('teacherhome:notallowed')    
 
 @method_decorator(decorators, name='dispatch')
 class AddassignFormView(View):

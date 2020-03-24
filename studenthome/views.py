@@ -67,10 +67,12 @@ class MarksView(View):
     def get(self, request):
         current_user = request.user
         student = Student.objects.get(user = current_user) 
-
-        teacher = Teacher.objects.get(class_teacher_of = student.study, school = student.school)  
-        marksheets = Marksdetails.objects.filter(roll_no = student.roll_no, teacher = teacher)
-
+        try:
+            teacher = Teacher.objects.get(class_teacher_of = student.study, school = student.school)  
+            marksheets = Marksdetails.objects.filter(roll_no = student.roll_no, teacher = teacher)
+        except:
+            marksheets=[]
+            pass
         bundle = dict()
         key = 1
         for a in marksheets:
